@@ -21,8 +21,13 @@ if (!process.env.SUPABASE_URL || !process.env.SUPABASE_KEY) {
 }
 
 // Inisialisasi
-const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
-const resend = new Resend(process.env.RESEND_API_KEY);
+const supabaseUrl = 'https://bvvnagfezgzrxfmkcuzz.supabase.co'; // URL Supabase Anda
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ2dm5hZ2Zlemd6cnhmbWtjdXp6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ1NzQ2NzQsImV4cCI6MjA4MDE1MDY3NH0.VhJeH1P2qsiH8mX_IQ7-Yg8kx76f-etiZ9cmusTqAaQ'; // Key Panjang Anon Supabase
+const resendKey = 're_hSLnyXYk_3F79zUuofZkBTUsSsXQqv1fQ'; // Key Resend Anda
+
+// Inisialisasi
+const supabase = createClient(supabaseUrl, supabaseKey);
+const resend = new Resend(resendKey);
 
 const ADMIN_EMAIL = 'ict@hakaauto.co.id';
 const FROM_EMAIL = 'Booking System <no-reply@ruang.bumiauto.works>';
