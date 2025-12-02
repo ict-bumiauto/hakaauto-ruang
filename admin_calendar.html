@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BUMI AUTO - Admin Calendar</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo-container">
+            <img src="logo_haka.png" alt="BUMI AUTO" class="logo">
+        </div>
+        <div class="user-menu">
+            <button id="themeToggle" style="background:none; border:none; cursor:pointer; font-size:20px; margin-right:15px;">🌙</button>
+            <div class="user-info">
+                <span class="user-name">ADMINISTRATOR</span>
+                <span class="user-role">Admin Account</span>
+            </div>
+            <a href="login.html" class="sign-out-btn">↪ Sign Out</a>
+        </div>
+    </nav>
+
+    <div class="subheader">
+        <div class="subheader-left">
+            <button class="back-arrow" onclick="window.location.href='admin.html'">←</button>
+            <div class="page-title">
+                <h1>Admin Calendar</h1>
+                <p>View approved schedules and manage priority bookings</p>
+            </div>
+        </div>
+        <div class="subheader-right">
+            <button class="btn-calendar outline-btn" onclick="window.location.href='admin.html'">Overview</button>
+            <button class="btn-calendar active-btn" onclick="window.location.href='admin_calendar.html'">📅 Calendar</button>
+            <button class="btn-calendar outline-btn" onclick="window.location.href='admin.html'">🕒 Requests</button>
+        </div>
+    </div>
+
+    <main class="main-container">
+        
+        <div class="left-content">
+            
+            <section class="card calendar-card">
+                <div class="calendar-header">
+                    <h2>Master Schedule</h2>
+                    <div class="calendar-nav">
+                        <button id="prevMonth" class="nav-btn">&lt;</button>
+                        <span id="currentMonthYear">Loading...</span>
+                        <button id="nextMonth" class="nav-btn">&gt;</button>
+                    </div>
+                </div>
+                <div class="calendar-body">
+                    <ul class="calendar-weekdays">
+                        <li>Sun</li><li>Mon</li><li>Tue</li><li>Wed</li><li>Thu</li><li>Fri</li><li>Sat</li>
+                    </ul>
+                    <ul class="calendar-days">
+                        </ul>
+                </div>
+            </section>
+
+            <section class="availability-section">
+                <div class="header-row" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h3>Room Availability Today</h3>
+                    <div class="carousel-nav">
+                        <button id="scrollLeft" class="circle-btn">❮</button>
+                        <button id="scrollRight" class="circle-btn">❯</button>
+                    </div>
+                </div>
+
+                <div class="room-list-wrapper">
+                    <div class="room-list" id="roomCarousel">
+                        <div class="room-card-item">
+                            <div class="room-info"><span class="pin-icon">📍</span><div><h4>(HO) Ruang ex-COO GMM</h4><p>Check calendar above</p></div></div><span class="badge badge-black">Active</span>
+                        </div>
+                        <div class="room-card-item">
+                            <div class="room-info"><span class="pin-icon">📍</span><div><h4>(HO) Ruang Meeting BHM</h4><p>Check calendar above</p></div></div><span class="badge badge-black">Active</span>
+                        </div>
+                        <div class="room-card-item">
+                            <div class="room-info"><span class="pin-icon">📍</span><div><h4>(HO) Ruang Meeting GMM</h4><p>Check calendar above</p></div></div><span class="badge badge-black">Active</span>
+                        </div>
+                        <div class="room-card-item">
+                            <div class="room-info"><span class="pin-icon">📍</span><div><h4>(Pejaten) Sales Room</h4><p>Check calendar above</p></div></div><span class="badge badge-black">Active</span>
+                        </div>
+                        <div class="room-card-item">
+                            <div class="room-info"><span class="pin-icon">📍</span><div><h4>(Pejaten) Yang Hwa</h4><p>Check calendar above</p></div></div><span class="badge badge-black">Active</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <aside class="sidebar">
+            <div class="card stats-card">
+                <h3>Admin Actions</h3>
+                <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 15px;">
+                    Klik tanggal di kalender untuk melihat detail booking, membatalkan jadwal, atau membuat <b>Priority Booking</b>.
+                </p>
+                <button class="btn-new-booking" onclick="window.location.href='admin.html'" style="width:100%">
+                    Go to Dashboard
+                </button>
+            </div>
+        </aside>
+
+    </main>
+
+    <div id="eventModal" class="modal-overlay">
+        <div class="modal-box center-modal" style="width: 90%; max-width: 500px; text-align: left; align-items: stretch;">
+            <div class="modal-header">
+                <h3 id="modalTitle">Schedule</h3>
+                <button class="close-modal-btn" onclick="closeModal()">×</button>
+            </div>
+            
+            <div class="modal-body" id="modalContent">
+                </div>
+
+            <div class="modal-footer" id="modalFooter">
+                </div>
+        </div>
+    </div>
+
+    <div id="overrideFormModal" class="modal-overlay" style="z-index: 1050;">
+        <div class="modal-box center-modal" style="width: 90%; max-width: 450px; text-align: left; align-items: stretch;">
+            
+            <div class="modal-header">
+                <h3>⚡ New Priority Booking</h3>
+                <button class="close-modal-btn" onclick="closeOverrideModal()">×</button>
+            </div>
+
+            <div class="modal-body">
+                <input type="hidden" id="overrideDate">
+
+                <div class="form-group">
+                    <label style="font-size:12px; font-weight:bold;">Room</label>
+                    <select id="ovRoom" class="input-field" style="width:100%; padding:8px;">
+                        <option value="Room A">(HO) Ruang ex-COO GMM</option>
+                        <option value="Room B">(HO) Ruang Meeting BHM</option>
+                        <option value="Room C">(HO) Ruang Meeting GMM</option>
+                        <option value="Room D">(Pejaten) Sales Room</option>
+                        <option value="Room E">(Pejaten) Yang Hwa</option>
+                    </select>
+                </div>
+
+                <div class="form-group" style="display:flex; gap:10px;">
+                    <div style="flex:1">
+                        <label style="font-size:12px; font-weight:bold;">Start Time</label>
+                        <select id="ovStart" class="input-field" style="width:100%; padding:8px;"></select>
+                    </div>
+                    <div style="flex:1">
+                        <label style="font-size:12px; font-weight:bold;">End Time</label>
+                        <select id="ovEnd" class="input-field" style="width:100%; padding:8px;"></select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label style="font-size:12px; font-weight:bold;">Priority Department</label>
+                    <select id="ovDept" class="input-field" style="width:100%; padding:8px;">
+                        <option value="TOP MANAGEMENT">TOP MANAGEMENT</option>
+                        <option value="General Affair, HSE, & Asset Department">General Affair, HSE, & Asset Department</option>
+                        <option value="Human Capital Business Partner Department">Human Capital Business Partner Department</option>
+                        </select>
+                </div>
+
+                <div class="form-group">
+                    <label style="font-size:12px; font-weight:bold;">Purpose</label>
+                    <input type="text" id="ovPurpose" class="input-field" placeholder="Meeting purpose..." style="width:100%; padding:8px;">
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn-primary-full" onclick="submitPriorityBooking()" style="background-color: var(--dark-blue);">
+                    Save & Override if Needed
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="theme.js"></script>
+    <script src="admin_calendar.js"></script>
+</body>
+</html>
