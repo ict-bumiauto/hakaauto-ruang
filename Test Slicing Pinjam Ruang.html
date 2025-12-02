@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bumi Auto - Room Booking</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo-container">
+            <img src="logo_haka.png" alt="BUMI AUTO" class="logo">
+        </div>
+        <div class="user-menu">
+            <button id="themeToggle" style="background:none; border:none; cursor:pointer; font-size:20px; margin-right:15px;">🌙</button>
+            <div class="user-info">
+                <span class="user-name" id="headerUserName">Loading...</span>
+                <span class="user-role">User Account</span>
+            </div>
+            <a href="login.html" class="sign-out-btn">↪ Sign Out</a>
+        </div>
+    </nav>
+
+    <div class="subheader">
+        <div class="subheader-left">
+            <button class="back-arrow">←</button>
+            <div class="page-title">
+                <h1>User Dashboard</h1>
+                <p>Book and manage your room reservations</p>
+            </div>
+        </div>
+        <div class="subheader-right">
+            <button class="btn-calendar outline-btn" onclick="window.location.href='calendar.html'">📅 Calendar</button>
+            <button class="btn-new-booking" onclick="window.location.href='Test Slicing Pinjam Ruang.html'">+ New Booking</button>
+        </div>
+    </div>
+
+    <main class="main-container">
+        
+        <section class="card form-card">
+            <div class="card-header">
+                <h2>Room Booking Request</h2>
+                <p>Fill out the form below to request a room booking</p>
+            </div>
+
+            <form id="bookingForm">
+                
+                <div class="form-grid-layout">
+                    
+                    <div class="form-column">
+                        <h3 class="section-title">Borrower Information</h3>
+                        
+                        <div class="form-group">
+                            <label>Borrower Name <span class="required">*</span></label>
+                            <input type="text" id="formBorrowerName" name="borrowerName" class="input-field">
+                        </div>
+
+                        <div class="form-group">
+                            <label>WhatsApp Number <span class="required">*</span></label>
+                            <input type="text" name="whatsapp" class="input-field" placeholder="Fill your number" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>SBU Origin <span class="required">*</span></label>
+                            <div class="select-wrapper">
+                                <select name="sbu" class="input-field" required>
+                                    <option value="">Select your department</option>
+                                    <option value="Top Management">Top Management</option>
+                                    <option value="Accounting Department">Accounting Department</option>
+                                    <option value="Aftersales & Customer Experience Department">Aftersales & Customer Experience Department</option>
+                                    <option value="BYD PEJATEN">BYD PEJATEN</option>
+                                    <option value="Finance Department">Finance Department</option>
+                                    <option value="Fleet Management Department">Fleet Management Department</option>
+                                    <option value="General Affair, HSE, & Asset Department">General Affair, HSE, & Asset Department</option>
+                                    <option value="Human Capital Business Partner Department">Human Capital Business Partner Department</option>
+                                    <option value="Learning Center Department">Learning Center Department</option>
+                                    <option value="Legal Department">Legal Department</option>
+                                    <option value="Logistics Department">Logistics Department</option>
+                                    <option value="Marketing Department">Marketing Department</option>
+                                    <option value="Network & Outlet Department">Network & Outlet Department</option>
+                                    <option value="Network Development Department">Network Development Department</option>
+                                    <option value="Procurement Department">Procurement Department</option>
+                                    <option value="Sales Support Department">Sales Support Department</option>
+                                    <option value="Strategic & Quality Business Improvement Department">Strategic & Quality Business Improvement Department</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Room <span class="required">*</span></label>
+                            <div class="select-wrapper">
+                                <select name="room" id="roomSelect" class="input-field" required>
+                                    <option value="" data-capacity="0">Select a room</option>
+                                    <option value="Ruang Meeting ex-GMM" data-capacity="15">Ruang Meeting ex-GMM (15 orang)</option>
+                                    <option value="Ruang Meeting BHM" data-capacity="10">Ruang Meeting BHM (10 orang)</option>
+                                    <option value="Ruang Meeting POSO" data-capacity="10">Ruang Meeting POSO (10 orang)</option>
+                                    <option value="Ruang Meeting Besar KALLA" data-capacity="20">Ruang Meeting Besar KALLA (20 orang)</option>
+                                    <option value="Ruang Meeting Kecil KALLA" data-capacity="10">Ruang Meeting Kecil KALLA (10 orang)</option>
+                                    <option value="Ruang Meeting Denza BYD Pejaten" data-capacity="20">Ruang Meeting Denza BYD Pejaten (20 orang)</option>
+                                    <option value="Ruang Meeting Yangwang BYD Pejaten" data-capacity="10">Ruang Meeting Yangwang BYD Pejaten (10 orang)</option>
+                                    <option value="Ruang Meeting Sales BYD Pejaten" data-capacity="30">Ruang Meeting Sales BYD Pejaten (30 orang)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-column">
+                        <h3 class="section-title">Booking Details</h3>
+
+                        <div class="form-group">
+                            <label>Purpose of Room Booking <span class="required">*</span></label>
+                            <input type="text" name="purpose" placeholder="Describe the purpose of your meeting" class="input-field" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Booking Date <span class="required">*</span></label>
+                            <input type="date" name="date" class="input-field" required>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group half">
+                                <label>Start Time <span class="required">*</span></label>
+                                <div class="select-wrapper">
+                                    <select id="startTime" name="startTime" class="input-field" required>
+                                        </select>
+                                </div>
+                            </div>
+                            <div class="form-group half">
+                                <label>End Time <span class="required">*</span></label>
+                                <div class="select-wrapper">
+                                    <select id="endTime" name="endTime" class="input-field" required>
+                                        </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Number of Participants <span class="required">*</span></label>
+                            <input type="number" id="numParticipants" name="participants" placeholder="Enter number of participants" class="input-field" required>
+                            <small id="capacityMsg" style="color: #EF4444; display: none; font-size: 11px; margin-top: 4px;">
+                                ⚠️ Melebihi kapasitas ruangan!
+                            </small>
+                        </div>
+                    </div>
+                </div> 
+                <div class="form-group full-width mt-20">
+                    <label class="checkbox-wrapper">
+                        <input type="checkbox" id="addonsToggle">
+                        <span class="label-text">Add-ons (Optional)</span>
+                    </label>
+                    <div id="addonsContainer" style="display: none; margin-top: 15px;">
+                        <div id="addonsList"></div>
+                        <button type="button" id="btnAddRow" class="btn-add-row">+ Tambah Item</button>
+                    </div>
+                </div>
+
+                <div class="form-group full-width mt-20">
+                    <label>Additional Notes (Optional)</label>
+                    <textarea name="notes" rows="3" placeholder="Any special requirements or notes" class="input-field"></textarea>
+                </div>
+
+                <div class="integrity-box">
+                    <label class="checkbox-container">
+                        <input type="checkbox" name="integrity" required>
+                        <div class="agreement-text">
+                            <strong>Integrity Pact Agreement <span class="required">*</span></strong>
+                            <p>I hereby declare that all information provided is true and accurate. I commit to use the booked room responsibly and in accordance with company policies. I understand that misuse may result in disciplinary action.</p>
+                        </div>
+                    </label>
+                </div>
+
+                <button type="submit" class="submit-btn">Submit Booking Request</button>
+            </form>
+        </section>
+
+        <aside class="sidebar-section">
+            <div class="card quick-stats">
+                <h3>Quick Stats</h3>
+                <ul class="stats-list">
+                    <li><span>Total Bookings</span><span class="stat-value">0</span></li>
+                    <li><span>Approved</span><span class="stat-value text-green">0</span></li>
+                    <li><span>Pending</span><span class="stat-value text-orange">0</span></li>
+                </ul>
+            </div>
+
+            <div class="card recent-bookings">
+                <h3>Recent Bookings</h3>
+                <div class="empty-state">
+                    </div>
+            </div>
+        </aside>
+
+    </main>
+
+    <div id="statusModal" class="modal-overlay">
+        <div class="modal-box center-modal">
+            <div class="modal-icon-wrapper error-bg">
+                <span class="modal-icon">⚠️</span>
+            </div>
+            <h3 id="modalTitle">Booking Failed!</h3>
+            <p id="modalMessage">Ruangan ini sudah dipesan pada jam tersebut.</p>
+            <button class="btn-primary-full" onclick="closeStatusModal()">OK, Saya Cek Lagi</button>
+        </div>
+    </div>
+
+    <script src="theme.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

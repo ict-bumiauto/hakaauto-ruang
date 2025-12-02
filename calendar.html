@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bumi Auto - Calendar</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo-container">
+            <img src="logo_haka.png" alt="BUMI AUTO" class="logo">
+        </div>
+        <div class="user-menu">
+            <button id="themeToggle" style="background:none; border:none; cursor:pointer; font-size:20px; margin-right:15px;">
+                🌙
+            </button>
+            <div class="user-info">
+                <span class="user-name" id="headerUserName">Loading...</span>
+                <span class="user-role">User Account</span>
+            </div>
+            <a href="login.html" class="sign-out-btn">↪ Sign Out</a>
+        </div>
+    </nav>
+
+    <div class="subheader">
+        <div class="subheader-left">
+            <button class="back-arrow" onclick="window.location.href='Test Slicing Pinjam Ruang.html'">←</button>
+            <div class="page-title">
+                <h1>User Dashboard</h1>
+                <p>Book and manage your room reservations</p>
+            </div>
+        </div>
+        <div class="subheader-right">
+            <button class="btn-calendar active-btn" onclick="window.location.href='calendar.html'">📅 Calendar</button>
+            <button class="btn-new-booking outline-btn" onclick="window.location.href='Test Slicing Pinjam Ruang.html'">+ New Booking</button>
+        </div>
+    </div>
+
+    <main class="main-container">
+        
+        <div class="left-content">
+            
+            <section class="card calendar-card">
+                <div class="calendar-header">
+                    <h2>Room Booking Calendar</h2>
+                    <div class="calendar-nav">
+                        <button id="prevMonth" class="nav-btn">&lt;</button>
+                        <span id="currentMonthYear">June 2025</span>
+                        <button id="nextMonth" class="nav-btn">&gt;</button>
+                    </div>
+                </div>
+
+                <div class="calendar-body">
+                    <ul class="calendar-weekdays">
+                        <li>Sun</li><li>Mon</li><li>Tue</li><li>Wed</li><li>Thu</li><li>Fri</li><li>Sat</li>
+                    </ul>
+                    <ul class="calendar-days">
+                        </ul>
+                </div>
+            </section>
+
+            <section class="availability-section">
+                <div class="header-row" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h3>Room Availability Today</h3>
+                    <div class="carousel-nav">
+                        <button id="scrollLeft" class="circle-btn">❮</button>
+                        <button id="scrollRight" class="circle-btn">❯</button>
+                    </div>
+                </div>
+
+                <div class="room-list-wrapper">
+                    <div class="room-list" id="roomCarousel">
+            
+                        <div class="room-card-item">
+                            <div class="room-info">
+                                <span class="pin-icon">📍</span>
+                                <div>
+                                    <h4>(HO) Ruang ex-COO GMM</h4>
+                                    <p>No bookings for today</p>
+                                </div>
+                            </div>
+                            <span class="badge badge-black">Available</span>
+                        </div>
+
+                        <div class="room-card-item">
+                            <div class="room-info">
+                                <span class="pin-icon">📍</span>
+                                <div>
+                                    <h4>(HO) Ruang Meeting BHM</h4>
+                                    <p>No bookings for today</p>
+                                </div>
+                            </div>
+                            <span class="badge badge-black">Available</span>
+                        </div>
+
+                        <div class="room-card-item">
+                            <div class="room-info">
+                                <span class="pin-icon">📍</span>
+                                <div>
+                                    <h4>(HO) Ruang Meeting GMM</h4>
+                                    <p>No bookings for today</p>
+                                </div>
+                            </div>
+                            <span class="badge badge-black">Available</span>
+                        </div>
+
+                        <div class="room-card-item">
+                            <div class="room-info">
+                                <span class="pin-icon">📍</span>
+                                <div>
+                                    <h4>(Pejaten) Sales Room</h4>
+                                    <p>No bookings for today</p>
+                                </div>
+                            </div>
+                            <span class="badge badge-black">Available</span>
+                        </div>
+
+                        <div class="room-card-item">
+                            <div class="room-info">
+                                <span class="pin-icon">📍</span>
+                                <div>
+                                    <h4>(Pejaten) Yang Hwa</h4>
+                                    <p>No bookings for today</p>
+                                </div>
+                            </div>
+                            <span class="badge badge-black">Available</span>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <aside class="sidebar">
+            <div class="card stats-card">
+                <h3>Quick Stats</h3>
+                <ul class="stats-list">
+                    <li><span>Total Bookings</span><span class="stat-value">0</span></li>
+                    <li><span>Approved</span><span class="stat-value text-green">0</span></li>
+                    <li><span>Pending</span><span class="stat-value text-orange">0</span></li>
+                </ul>
+            </div>
+
+            <div class="card recent-card">
+                <h3>Recent Bookings</h3>
+                <div class="empty-state">
+                    </div>
+            </div>
+        </aside>
+
+    </main>
+
+    <script src="calendar.js"></script>
+    <script src="theme.js"></script>
+</body>
+</html>
