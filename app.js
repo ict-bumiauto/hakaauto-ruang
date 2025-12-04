@@ -147,9 +147,15 @@ document.addEventListener('DOMContentLoaded', function() {
     // ============================================================
     const form = document.getElementById('bookingForm');
 
+    // CEK 1: Apakah form ditemukan?
+    console.log("Status Form:", form); // Kalau ini null, berarti ID HTML salah
+
     if (form) {
         form.addEventListener('submit', function(event) {
             event.preventDefault();
+
+            // CEK 2: Apakah tombol berhasil diklik?
+            console.log("🚀 Tombol Submit DIKLIK!");
 
             // 1. Cek Integrity
             const integrity = form.querySelector('input[name="integrity"]');
