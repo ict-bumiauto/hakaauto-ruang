@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const savedName = localStorage.getItem('currentUser');
     if (!savedName) {
         // Cek dulu apakah kita sudah di halaman login? Kalau belum baru redirect
-        if (!window.location.pathname.includes('index.html') && !window.location.pathname.endsWith('/')) {
+        if (!window.location.pathname.includes('login.html') && !window.location.pathname.endsWith('/')) {
              // window.location.href = 'index.html'; // Opsional: Matikan jika mengganggu tes lokal
         }
     }
@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
         signOutBtn.addEventListener('click', (e) => {
             e.preventDefault(); 
             localStorage.clear(); 
-            window.location.href = 'index.html'; // Pastikan nama file login benar
+            window.location.href = 'login.html'; // Pastikan nama file login benar
         });
     }
 
