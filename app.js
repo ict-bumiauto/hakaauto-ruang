@@ -1,30 +1,58 @@
-// URL API BACKEND
-const API_URL = '/api/bookings';
+// ============================================================
+// KONFIGURASI API (PENTING!)
+// ============================================================
+// Jika tes di Vercel (Online), gunakan: '/api/bookings'
+// Jika tes di Laptop (File Lokal), gunakan URL LENGKAP Vercel Anda:
+const API_URL = 'https://pinjam-ruang-bumi-auto.vercel.app/api/bookings'; 
+
 document.addEventListener('DOMContentLoaded', function() {
-    
+    console.log("🚀 App.js Dimulai...");
+
     // ============================================================
-    // 1. AUTH & INITIALIZATION
+    // 1. AUTH & INITIALIZATION (DENGAN PENGAMAN)
     // ============================================================
     const savedName = localStorage.getItem('currentUser');
-    if (!savedName) { window.location.href = 'login.html'; return; }
+    if (!savedName) {
+        // Cek dulu apakah kita sudah di halaman login? Kalau belum baru redirect
+        if (!window.location.pathname.includes('index.html') && !window.location.pathname.endsWith('/')) {
+             // window.location.href = 'index.html'; // Opsional: Matikan jika mengganggu tes lokal
+        }
+    }
 
-    document.getElementById('headerUserName').innerText = savedName;
-    const formNameEl = document.getElementById('formBorrowerName');
-    if (formNameEl) formNameEl.value = savedName;
+    // Gunakan '?' (Optional Chaining) agar tidak error jika elemen tidak ada
+    const headerName = document.getElementById('headerUserName');
+    if(headerName) headerName.innerText = savedName || 'Guest';
 
-    document.querySelector('.sign-out-btn')?.addEventListener('click', (e) => {
-        e.preventDefault(); localStorage.clear(); window.location.href = 'login.html';
-    });
+    const formName = document.getElementById('formBorrowerName');
+    if(formName) formName.value = savedName || '';
 
+    // Tombol Sign Out
+    const signOutBtn = document.querySelector('.sign-out-btn');
+    if (signOutBtn) {
+        signOutBtn.addEventListener('click', (e) => {
+            e.preventDefault(); 
+            localStorage.clear(); 
+            window.location.href = 'index.html'; // Pastikan nama file login benar
+        });
+    }
+
+    // Admin Mode Setup
     const userRole = localStorage.getItem('userRole');
     if (userRole === 'admin') {
-        document.querySelector('.page-title h1').innerText = "Admin Booking Mode";
-        document.querySelector('.page-title h1').style.color = "#Eab308";
-        document.querySelector('.back-arrow').onclick = () => window.location.href = 'admin.html';
+        const pageTitle = document.querySelector('.page-title h1');
+        if (pageTitle) {
+            pageTitle.innerText = "Admin Booking Mode";
+            pageTitle.style.color = "#Eab308";
+        }
+        
+        const backArrow = document.querySelector('.back-arrow');
+        if (backArrow) {
+            backArrow.onclick = () => window.location.href = 'admin.html';
+        }
     }
 
     // ============================================================
-    // 2. FORM HELPERS (Date, Time, Addons)
+    // 2. FORM HELPERS
     // ============================================================
     // Auto-fill Date
     const urlParams = new URLSearchParams(window.location.search);
@@ -81,23 +109,31 @@ document.addEventListener('DOMContentLoaded', function() {
     
     if (addonsToggle) {
         addonsToggle.addEventListener('change', function() {
-            addonsContainer.style.display = this.checked ? 'block' : 'none';
-            if(this.checked && addonsList.children.length === 0) addonsList.appendChild(createAddonRow());
-            if(!this.checked) addonsList.innerHTML = '';
+            if(addonsContainer) {
+                addonsContainer.style.display = this.checked ? 'block' : 'none';
+                if(this.checked && addonsList && addonsList.children.length === 0) addonsList.appendChild(createAddonRow());
+                if(!this.checked && addonsList) addonsList.innerHTML = '';
+            }
         });
     }
-    if (btnAddRow) btnAddRow.addEventListener('click', () => { if(addonsList.children.length < 2) addonsList.appendChild(createAddonRow()); });
-    if (addonsList) addonsList.addEventListener('click', (e) => { if(e.target.classList.contains('btn-remove-row')) e.target.closest('.addon-row').remove(); });
+    if (btnAddRow) btnAddRow.addEventListener('click', () => { 
+        if(addonsList && addonsList.children.length < 2) addonsList.appendChild(createAddonRow()); 
+    });
+    if (addonsList) addonsList.addEventListener('click', (e) => { 
+        if(e.target.classList.contains('btn-remove-row')) e.target.closest('.addon-row').remove(); 
+    });
 
 
     // ============================================================
-    // 3. VALIDASI KAPASITAS (VISUAL ONLY)
+    // 3. VALIDASI KAPASITAS (SOFT BLOCK)
     // ============================================================
     const roomSelectEl = document.getElementById('roomSelect');
     const participantsInput = document.getElementById('numParticipants');
     const capacityMsg = document.getElementById('capacityMsg');
 
     function checkCapacityVisual() {
+        if(!roomSelectEl || !participantsInput) return false;
+
         const sel = roomSelectEl.options[roomSelectEl.selectedIndex];
         const max = parseInt(sel.getAttribute('data-capacity')) || 0;
         const current = parseInt(participantsInput.value) || 0;
@@ -108,7 +144,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 capacityMsg.style.display = 'block';
                 capacityMsg.innerText = `⚠️ Melebihi standar (${max} orang), namun tetap bisa diajukan.`;
             }
-            return true; // Return true jika over capacity
+            return true; // Over capacity
         } else {
             participantsInput.classList.remove('input-error');
             if(capacityMsg) capacityMsg.style.display = 'none';
@@ -126,148 +162,65 @@ document.addEventListener('DOMContentLoaded', function() {
     // ============================================================
     window.showErrorModal = (title, message) => {
         const m = document.getElementById('statusModal');
-        document.getElementById('modalTitle').innerText = title;
-        document.getElementById('modalMessage').innerHTML = message;
-        m.style.display = 'flex';
+        if(m) {
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalMessage').innerHTML = message;
+            m.style.display = 'flex';
+        } else { alert(title + "\n" + message); }
     };
-    window.closeStatusModal = () => document.getElementById('statusModal').style.display = 'none';
     
-    // Modal Kapasitas
+    window.closeStatusModal = () => {
+        const m = document.getElementById('statusModal');
+        if(m) m.style.display = 'none';
+    }
+    
     const capModal = document.getElementById('capacityModal');
-    window.closeCapacityModal = () => capModal.style.display = 'none';
+    window.closeCapacityModal = () => { if(capModal) capModal.style.display = 'none'; }
     
-    // Tombol "Tetap Lanjut" di dalam Modal
-    document.getElementById('btnProceedCapacity').onclick = () => {
-        closeCapacityModal();
-        processBooking(true); // Panggil fungsi inti dengan flag 'force' (opsional)
-    };
+    const btnProceed = document.getElementById('btnProceedCapacity');
+    if(btnProceed) {
+        btnProceed.onclick = () => {
+            closeCapacityModal();
+            processBooking(); // Lanjut proses
+        };
+    }
 
     // ============================================================
     // 5. LOGIKA SUBMIT UTAMA
     // ============================================================
     const form = document.getElementById('bookingForm');
 
-    // CEK 1: Apakah form ditemukan?
-    console.log("Status Form:", form); // Kalau ini null, berarti ID HTML salah
-
     if (form) {
         form.addEventListener('submit', function(event) {
             event.preventDefault();
 
-            // CEK 2: Apakah tombol berhasil diklik?
-            console.log("🚀 Tombol Submit DIKLIK!");
-
             // 1. Cek Integrity
             const integrity = form.querySelector('input[name="integrity"]');
-            if (!integrity || !integrity.checked) {
+            if (integrity && !integrity.checked) {
                 alert('Please agree to the Integrity Pact Agreement.');
                 return;
             }
 
-            // 2. Cek Kapasitas (Soft Block)
-            const isOverCapacity = checkCapacityVisual(); // Fungsi ini me-return true jika merah
+            // 2. Cek Kapasitas
+            const isOverCapacity = checkCapacityVisual();
             
-            if (isOverCapacity) {
+            if (isOverCapacity && capModal) {
                 // TAMPILKAN MODAL WARNING
                 const sel = roomSelectEl.options[roomSelectEl.selectedIndex];
                 const max = parseInt(sel.getAttribute('data-capacity'));
                 const cur = parseInt(participantsInput.value);
                 
-                document.getElementById('capModalMessage').innerHTML = 
-                    `Ruangan ini maksimal <b>${max} orang</b>, tapi Anda memasukkan <b>${cur} orang</b>.<br><br>Apakah Anda yakin ingin tetap melanjutkan?`;
+                const msgEl = document.getElementById('capModalMessage');
+                if(msgEl) msgEl.innerHTML = `Ruangan ini maksimal <b>${max} orang</b>, tapi Anda memasukkan <b>${cur} orang</b>.<br><br>Apakah Anda yakin ingin tetap melanjutkan?`;
                 
                 capModal.style.display = 'flex';
-                return; // Stop di sini, tunggu user klik tombol di modal
+                return; // Stop, tunggu konfirmasi modal
             }
 
             // Jika aman, langsung proses
             processBooking();
         });
     }
-
-    // ============================================================
-    // 7. DASHBOARD STATS & RECENT BOOKINGS (REAL-TIME)
-    // ============================================================
-    async function updateDashboardStats() {
-        // Indikator Loading (Opsional biar user tau lagi proses)
-        const recentContainer = document.querySelector('.recent-bookings');
-        if(recentContainer) recentContainer.innerHTML = '<p style="padding:20px; text-align:center;">Loading data...</p>';
-
-        try {
-            const response = await fetch(API_URL);
-            if (!response.ok) return; // Silent fail biar gak ganggu user
-            
-            const allBookings = await response.json();
-            if (!Array.isArray(allBookings)) return;
-
-            // --- A. UPDATE QUICK STATS ---
-            // Hitung jumlah berdasarkan status
-            const total = allBookings.length;
-            const approved = allBookings.filter(b => b.status === 'Approved').length;
-            const pending = allBookings.filter(b => b.status === 'Pending').length;
-
-            // Update Angka di HTML (Pastikan class selector-nya benar)
-            // Kita cari elemen berdasarkan struktur HTML sidebar
-            const statsList = document.querySelector('.quick-stats .stats-list');
-            if (statsList) {
-                // Total
-                statsList.children[0].querySelector('.stat-value').innerText = total;
-                // Approved
-                statsList.children[1].querySelector('.stat-value').innerText = approved;
-                // Pending
-                statsList.children[2].querySelector('.stat-value').innerText = pending;
-            }
-
-            // --- B. UPDATE RECENT BOOKINGS (GLOBAL LIST) ---
-            const recentContainer = document.querySelector('.recent-bookings');
-            if (recentContainer) {
-                // Ambil 5 data terbaru (karena dari server sudah urut created_at desc, tinggal slice)
-                const recentData = allBookings.slice(0, 5);
-
-                let htmlContent = '<h3>Recent Bookings</h3>';
-                
-                if (recentData.length === 0) {
-                    htmlContent += '<p class="empty-state" style="color:#999; font-size:13px;">No bookings yet.</p>';
-                } else {
-                    htmlContent += '<ul style="list-style:none; padding:0; margin-top:10px;">';
-                    
-                    recentData.forEach(booking => {
-                        // Tentukan warna status
-                        let statusColor = '#64748B'; // Default gray
-                        if(booking.status === 'Approved') statusColor = '#10B981'; // Green
-                        if(booking.status === 'Pending') statusColor = '#F59E0B';  // Orange
-                        if(booking.status === 'Rejected' || booking.status === 'Cancelled') statusColor = '#EF4444'; // Red
-
-                        // Format tampilan: Nama - Ruang (Jam)
-                        htmlContent += `
-                            <li style="margin-bottom: 12px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
-                                <div style="display:flex; justify-content:space-between; align-items:center;">
-                                    <span style="font-weight:bold; font-size:13px; color:var(--text-main);">${booking.borrowerName}</span>
-                                    <span style="font-size:10px; font-weight:bold; color:${statusColor}; border:1px solid ${statusColor}; padding:1px 4px; border-radius:4px;">${booking.status}</span>
-                                </div>
-                                <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">
-                                    ${booking.department} • ${booking.roomName}
-                                </div>
-                                <div style="font-size:11px; color:var(--text-muted);">
-                                    📅 ${booking.bookingDate} (${booking.startTime}-${booking.endTime})
-                                </div>
-                            </li>
-                        `;
-                    });
-                    htmlContent += '</ul>';
-                }
-
-                // Masukkan ke dalam container (Timpa isinya)
-                recentContainer.innerHTML = htmlContent;
-            }
-
-        } catch (error) {
-            console.error("Gagal update dashboard:", error);
-        }
-    }
-
-    // Jalankan fungsi ini saat load
-    updateDashboardStats();
 
     // ============================================================
     // 6. FUNGSI INTI PROSES BOOKING (KE SERVER)
@@ -281,9 +234,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
         try {
             // A. Cek Bentrok
+            console.log("Fetching data from:", API_URL); // Debugging
             const response = await fetch(API_URL);
+            
+            if (!response.ok) throw new Error("Gagal terhubung ke server");
+            
             const allBookings = await response.json();
-            if (!Array.isArray(allBookings)) throw new Error("Data error");
+            if (!Array.isArray(allBookings)) throw new Error("Format data salah");
 
             const newStart = toMinutes(data.startTime);
             const newEnd = toMinutes(data.endTime);
@@ -356,7 +313,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         } catch (error) {
             console.error(error);
-            alert("Terjadi kesalahan koneksi.");
+            alert("Terjadi kesalahan koneksi (Cek Console).");
         }
     }
 
