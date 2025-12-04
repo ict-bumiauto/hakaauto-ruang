@@ -1,6 +1,5 @@
 {
   "version": 2,
-  "cleanurls": true,
   "rewrites": [
     {
       "source": "/api/(.*)",
