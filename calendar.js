@@ -121,6 +121,6 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelector('.sign-out-btn').addEventListener('click', (e) => {
         e.preventDefault();
         localStorage.clear();
-        window.location.href = '/';
+        window.location.href = '/login';
     });
 });
