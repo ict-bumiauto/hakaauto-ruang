@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
         signOutBtn.addEventListener('click', (e) => {
             e.preventDefault(); 
             localStorage.clear(); 
-            window.location.href = '/'; // Ke Halaman Login
+            window.location.href = '/login'; // Ke Halaman Login
         });
     }
 
