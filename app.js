@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
         signOutBtn.addEventListener('click', (e) => {
             e.preventDefault(); 
             localStorage.clear(); 
-            window.location.href = '/login'; // Pastikan nama file login benar
+            window.location.href = '/'; // Pastikan nama file login benar
         });
     }
 

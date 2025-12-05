@@ -102,15 +102,15 @@
 
     <div class="subheader">
         <div class="subheader-left">
-            <button class="back-arrow" onclick="window.location.href='dashboard.html'">←</button>
+            <button class="back-arrow" onclick="window.location.href='/dashboard'">←</button>
             <div class="page-title">
                 <h1>Room Booking Status</h1>
                 <p>Track the status of your reservation</p>
             </div>
         </div>
         <div class="subheader-right">
-            <button class="btn-calendar" onclick="window.location.href='calendar.html'">📅 Calendar</button>
-            <button class="btn-new-booking" onclick="window.location.href='index.html'">+ New Booking</button>
+            <button class="btn-calendar" onclick="window.location.href='/calendar'">📅 Calendar</button>
+            <button class="btn-new-booking" onclick="window.location.href='/dashboard'">+ New Booking</button>
         </div>
     </div>
 
@@ -170,7 +170,7 @@
         // Jika data tidak ada (misal user langsung buka link submit.html tanpa isi form)
         if (!rawData) {
             alert("Data booking tidak ditemukan. Kembali ke dashboard.");
-            window.location.href = 'index.html';
+            window.location.href = '/dashboard';
             return;
         }
 
