@@ -3,7 +3,7 @@ const API_URL = '/api/bookings';
 document.addEventListener('DOMContentLoaded', function() {
     
     const role = localStorage.getItem('userRole');
-    if (role !== 'admin') { window.location.href = 'index.html'; return; }
+    if (role !== 'admin') { window.location.href = '/'; return; }
 
     const daysTag = document.querySelector(".calendar-days");
     const currentDateDisplay = document.querySelector("#currentMonthYear");

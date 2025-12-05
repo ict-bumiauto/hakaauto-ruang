@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // --- 1. USER AUTH ---
     const savedName = localStorage.getItem('currentUser');
-    if (!savedName) { window.location.href = 'login.html'; return; }
+    if (!savedName) { window.location.href = '/login'; return; }
     document.getElementById('headerUserName').innerText = savedName;
 
     // --- 2. UPDATE ROOM STATUS (MERAH/HITAM) ---
@@ -114,13 +114,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // Pindah ke Form Booking
     window.selectDate = (y, m, d) => {
         const fullDate = `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-        window.location.href = `index.html?date=${fullDate}`;
+        window.location.href = `/?date=${fullDate}`;
     };
     
     // Logout
     document.querySelector('.sign-out-btn').addEventListener('click', (e) => {
         e.preventDefault();
         localStorage.clear();
-        window.location.href = 'login.html';
+        window.location.href = '/login';
     });
 });

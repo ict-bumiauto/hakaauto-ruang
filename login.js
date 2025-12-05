@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', function() {
             showLoading('Masuk ke Admin Dashboard...');
 
             setTimeout(() => {
-                window.location.href = 'admin.html'; // Pindah ke Admin
+                window.location.href = '/admin'; // Pindah ke Admin
             }, 1000);
             
             return; // Berhenti di sini, jangan lanjut ke logic user
@@ -89,7 +89,7 @@ document.addEventListener('DOMContentLoaded', function() {
             showLoading('Verifying User...');
 
             setTimeout(() => {
-                window.location.href = 'index.html'; // Pindah ke User Dashboard
+                window.location.href = '/'; // Pindah ke User Dashboard
             }, 1000);
         }
     });

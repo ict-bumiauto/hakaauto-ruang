@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const savedName = localStorage.getItem('currentUser');
     if (!savedName) {
         // Cek dulu apakah kita sudah di halaman login? Kalau belum baru redirect
-        if (!window.location.pathname.includes('login.html') && !window.location.pathname.endsWith('/')) {
+        if (!window.location.pathname.includes('/login') && !window.location.pathname.endsWith('/')) {
              // window.location.href = 'index.html'; // Opsional: Matikan jika mengganggu tes lokal
         }
     }
@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
         signOutBtn.addEventListener('click', (e) => {
             e.preventDefault(); 
             localStorage.clear(); 
-            window.location.href = 'login.html'; // Pastikan nama file login benar
+            window.location.href = '/login'; // Pastikan nama file login benar
         });
     }
 
@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         const backArrow = document.querySelector('.back-arrow');
         if (backArrow) {
-            backArrow.onclick = () => window.location.href = 'admin.html';
+            backArrow.onclick = () => window.location.href = '/admin';
         }
     }
 
@@ -306,7 +306,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (saveRes.ok) {
                 localStorage.setItem('lastBookingData', JSON.stringify(newBooking));
-                window.location.href = 'submit.html';
+                window.location.href = '/submit';
             } else {
                 alert("Gagal menyimpan data.");
             }
