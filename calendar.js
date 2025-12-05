@@ -118,7 +118,7 @@ document.addEventListener('DOMContentLoaded', function() {
     renderPage();
 
     // ============================================================
-    // 4. UPDATE ROOM STATUS (WIDGET BAWAH)
+    // 4. UPDATE ROOM STATUS (WIDGET BAWAH) - [FIXED]
     // ============================================================
     function updateRoomStatus(allBookings) {
         const now = new Date();
@@ -130,17 +130,29 @@ document.addEventListener('DOMContentLoaded', function() {
 
         document.querySelectorAll('.room-card-item').forEach(card => {
             const titleEl = card.querySelector('h4');
-            const badgeEl = card.querySelector('span.badge');
+            const badgeEl = card.querySelector('span.badge'); // Variabelnya badgeEl
             const descEl = card.querySelector('p');
 
             if (titleEl && badgeEl) {
                 const name = titleEl.innerText.trim();
                 if (bookedRooms.includes(name)) {
-                    badgeEl.innerText = 'Booked'; badge.className = 'badge badge-red';
-                    if(descEl) { descEl.innerText = 'Not Available'; descEl.style.color = '#EF4444'; }
+                    // KASUS BOOKED
+                    badgeEl.innerText = 'Booked'; 
+                    badgeEl.className = 'badge badge-red'; // Perbaikan: Gunakan badgeEl
+                    
+                    if(descEl) { 
+                        descEl.innerText = 'Not Available'; 
+                        descEl.style.color = '#EF4444'; 
+                    }
                 } else {
-                    badgeEl.innerText = 'Available'; badge.className = 'badge badge-black';
-                    if(descEl) { descEl.innerText = 'Ready'; descEl.style.color = ''; }
+                    // KASUS AVAILABLE
+                    badgeEl.innerText = 'Available'; 
+                    badgeEl.className = 'badge badge-black'; // Perbaikan: Gunakan badgeEl
+                    
+                    if(descEl) { 
+                        descEl.innerText = 'Ready'; 
+                        descEl.style.color = ''; 
+                    }
                 }
             }
         });
