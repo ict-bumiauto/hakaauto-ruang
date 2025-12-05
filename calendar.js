@@ -1,4 +1,4 @@
-// GANTI DENGAN LINK API VERCEL ANDA (Sama seperti di app.js)
+// GANTI DENGAN LINK API VERCEL ANDA (Relative Path)
 const API_URL = '/api/bookings'; 
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -18,9 +18,9 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // ============================================================
-    // 2. DASHBOARD STATS & RECENT BOOKINGS (DITAMBAHKAN)
+    // 2. DASHBOARD STATS & RECENT BOOKINGS (INI YANG TADI KURANG)
     // ============================================================
-    async function updateDashboardStats(allBookings) {
+    function updateDashboardStats(allBookings) {
         // --- A. UPDATE QUICK STATS ---
         const statsList = document.querySelector('.quick-stats .stats-list');
         if (statsList) {
@@ -28,6 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const approved = allBookings.filter(b => b.status === 'Approved').length;
             const pending = allBookings.filter(b => b.status === 'Pending').length;
             
+            // Update angka di HTML
             statsList.children[0].querySelector('.stat-value').innerText = total;
             statsList.children[1].querySelector('.stat-value').innerText = approved;
             statsList.children[2].querySelector('.stat-value').innerText = pending;
@@ -78,8 +79,10 @@ document.addEventListener('DOMContentLoaded', function() {
             if(res.ok) allBookings = await res.json();
         } catch(e) { console.error("Gagal load data"); }
 
-        // PANGGIL UPDATE STATS & ROOM STATUS
+        // --- PANGGIL FUNGSI STATS DI SINI ---
         updateDashboardStats(allBookings);
+        
+        // Update Room Availability Widget
         updateRoomStatus(allBookings);
 
         // --- RENDER KALENDER ---
@@ -118,7 +121,7 @@ document.addEventListener('DOMContentLoaded', function() {
     renderPage();
 
     // ============================================================
-    // 4. UPDATE ROOM STATUS (WIDGET BAWAH) - [FIXED]
+    // 4. UPDATE ROOM STATUS (WIDGET BAWAH)
     // ============================================================
     function updateRoomStatus(allBookings) {
         const now = new Date();
@@ -130,29 +133,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
         document.querySelectorAll('.room-card-item').forEach(card => {
             const titleEl = card.querySelector('h4');
-            const badgeEl = card.querySelector('span.badge'); // Variabelnya badgeEl
+            const badgeEl = card.querySelector('span.badge');
             const descEl = card.querySelector('p');
 
             if (titleEl && badgeEl) {
                 const name = titleEl.innerText.trim();
                 if (bookedRooms.includes(name)) {
-                    // KASUS BOOKED
-                    badgeEl.innerText = 'Booked'; 
-                    badgeEl.className = 'badge badge-red'; // Perbaikan: Gunakan badgeEl
-                    
-                    if(descEl) { 
-                        descEl.innerText = 'Not Available'; 
-                        descEl.style.color = '#EF4444'; 
-                    }
+                    badgeEl.innerText = 'Booked'; badgeEl.className = 'badge badge-red';
+                    if(descEl) { descEl.innerText = 'Not Available'; descEl.style.color = '#EF4444'; }
                 } else {
-                    // KASUS AVAILABLE
-                    badgeEl.innerText = 'Available'; 
-                    badgeEl.className = 'badge badge-black'; // Perbaikan: Gunakan badgeEl
-                    
-                    if(descEl) { 
-                        descEl.innerText = 'Ready'; 
-                        descEl.style.color = ''; 
-                    }
+                    badgeEl.innerText = 'Available'; badgeEl.className = 'badge badge-black';
+                    if(descEl) { descEl.innerText = 'Ready'; descEl.style.color = ''; }
                 }
             }
         });
@@ -166,13 +157,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 date = new Date(currYear, currMonth, new Date().getDate());
                 currYear = date.getFullYear(); currMonth = date.getMonth();
             } else { date = new Date(); }
-            renderPage(); // Panggil ulang render
+            renderPage(); 
         });
     });
 
     // Pindah ke Form
     window.selectDate = (y, m, d) => {
         const fullDate = `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-        window.location.href = `/dashboard?date=${fullDate}`; // Pastikan ke dashboard
+        window.location.href = `/dashboard?date=${fullDate}`;
     };
 });
