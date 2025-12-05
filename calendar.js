@@ -121,32 +121,85 @@ document.addEventListener('DOMContentLoaded', function() {
     renderPage();
 
     // ============================================================
-    // 4. UPDATE ROOM STATUS (WIDGET BAWAH)
+    // 4. ROOM AVAILABILITY (DASHBOARD WIDGET)
     // ============================================================
-    function updateRoomStatus(allBookings) {
-        const now = new Date();
-        const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-        
-        const bookedRooms = allBookings
-            .filter(b => b.bookingDate === todayStr && b.status === 'Approved')
-            .map(b => b.roomName.trim());
+    async function updateRoomStatus() {
+        try {
+            const response = await fetch(API_URL);
+            if (!response.ok) return;
+            const allBookings = await response.json();
+            if (!Array.isArray(allBookings)) return;
 
-        document.querySelectorAll('.room-card-item').forEach(card => {
-            const titleEl = card.querySelector('h4');
-            const badgeEl = card.querySelector('span.badge');
-            const descEl = card.querySelector('p');
+            const now = new Date();
+            const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+            
+            const bookedRooms = allBookings
+                .filter(b => b.bookingDate === todayStr && b.status === 'Approved')
+                .map(b => b.roomName.trim());
 
-            if (titleEl && badgeEl) {
-                const name = titleEl.innerText.trim();
-                if (bookedRooms.includes(name)) {
-                    badgeEl.innerText = 'Booked'; badgeEl.className = 'badge badge-red';
-                    if(descEl) { descEl.innerText = 'Not Available'; descEl.style.color = '#EF4444'; }
-                } else {
-                    badgeEl.innerText = 'Available'; badgeEl.className = 'badge badge-black';
-                    if(descEl) { descEl.innerText = 'Ready'; descEl.style.color = ''; }
+            document.querySelectorAll('.room-card-item').forEach(card => {
+                const titleEl = card.querySelector('h4');
+                const badgeEl = card.querySelector('span.badge');
+                const descEl = card.querySelector('p');
+
+                if (titleEl && badgeEl) {
+                    const roomName = titleEl.innerText.trim();
+                    if (bookedRooms.includes(roomName)) {
+                        badgeEl.innerText = 'Booked';
+                        badgeEl.className = 'badge badge-red';
+                        if (descEl) { descEl.innerText = 'Not Available Today'; descEl.style.color = '#EF4444'; }
+                    } else {
+                        badgeEl.innerText = 'Available';
+                        badgeEl.className = 'badge badge-black';
+                        if (descEl) { descEl.innerText = 'Ready to use'; descEl.style.color = ''; }
+                    }
                 }
+            });
+
+            // UPDATE RECENT BOOKINGS & STATS
+            updateDashboardStats(allBookings);
+
+        } catch (error) {
+            console.error("Gagal update status:", error);
+        }
+    }
+    updateRoomStatus(); 
+
+    function updateDashboardStats(allBookings) {
+        const statsList = document.querySelector('.quick-stats .stats-list');
+        if (statsList) {
+            const total = allBookings.length;
+            const approved = allBookings.filter(b => b.status === 'Approved').length;
+            const pending = allBookings.filter(b => b.status === 'Pending').length;
+            statsList.children[0].querySelector('.stat-value').innerText = total;
+            statsList.children[1].querySelector('.stat-value').innerText = approved;
+            statsList.children[2].querySelector('.stat-value').innerText = pending;
+        }
+
+        const recentContainer = document.querySelector('.recent-bookings');
+        if (recentContainer) {
+            const recentData = allBookings.slice(0, 5);
+            let htmlContent = '<h3>Recent Bookings</h3>';
+            if (recentData.length === 0) {
+                htmlContent += '<p style="color:#999; font-size:13px;">No bookings yet.</p>';
+            } else {
+                htmlContent += '<ul style="list-style:none; padding:0; margin-top:10px;">';
+                recentData.forEach(b => {
+                    let color = b.status === 'Approved' ? '#10B981' : (b.status === 'Pending' ? '#F59E0B' : '#EF4444');
+                    htmlContent += `
+                        <li style="margin-bottom:12px; border-bottom:1px solid #eee; padding-bottom:8px;">
+                            <div style="display:flex; justify-content:space-between;">
+                                <span style="font-weight:bold; font-size:13px;">${b.borrowerName}</span>
+                                <span style="font-size:10px; font-weight:bold; color:${color}; border:1px solid ${color}; padding:1px 4px; border-radius:4px;">${b.status}</span>
+                            </div>
+                            <div style="font-size:11px; color:#64748B;">${b.roomName}</div>
+                            <div style="font-size:11px; color:#64748B;">📅 ${b.bookingDate} (${b.startTime}-${b.endTime})</div>
+                        </li>`;
+                });
+                htmlContent += '</ul>';
             }
-        });
+            recentContainer.innerHTML = htmlContent;
+        }
     }
 
     // Navigasi Bulan
