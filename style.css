@@ -615,10 +615,10 @@ body {
 }
 
 /* =========================================
-   FIX CAROUSEL: 3 KARTU PRESISI (ANTI MELAR)
+   FIX FINAL CAROUSEL: UKURAN PIXEL TETAP & STABIL
 ========================================= */
 
-/* 0. RESET PENTING (Agar padding tidak merusak ukuran) */
+/* 0. RESET PENTING */
 .availability-section, 
 .room-list-wrapper, 
 .room-list, 
@@ -626,30 +626,23 @@ body {
     box-sizing: border-box !important;
 }
 
-/* 1. Container Utama */
+/* 1. Container Utama (Mengunci Agar Tidak Melebar) */
 .availability-section {
     width: 100%;
-    max-width: 100%; /* Kunci agar tidak lewat layar */
-    overflow: hidden;
-    padding: 10px 0;
+    max-width: 100%; 
+    overflow: hidden; /* Kunci agar tidak lewat layar */
+    padding: 20px 0;
 }
 
-/* 2. Wrapper Carousel */
-.room-list-wrapper {
-    width: 100%;
-    position: relative;
-}
-
-/* 3. Area Scroll */
+/* 2. Area Scroll (.room-list) */
 .room-list {
     display: flex;
-    flex-wrap: nowrap;     /* Baris tunggal */
+    flex-wrap: nowrap;     /* Kunci agar tidak turun baris */
     overflow-x: auto;      /* Scroll horizontal */
     width: 100%;
     
-    /* PENGATURAN JARAK */
-    gap: 20px;             /* Jarak antar kartu */
-    padding: 5px 2px 15px 2px; /* Padding dikit biar bayangan ga kepotong */
+    gap: 15px;             /* Jarak antar kartu */
+    padding: 5px 0 15px 0; /* Ruang scrollbar & bayangan */
     
     /* Sembunyikan Scrollbar */
     scrollbar-width: none;
@@ -657,15 +650,12 @@ body {
 }
 .room-list::-webkit-scrollbar { display: none; }
 
-/* 4. KARTU ITEM (3 KARTU / LAYAR) */
+/* 3. KARTU ITEM (KUNCI LEBAR TETAP) */
 .room-card-item {
-    /* RUMUS MATEMATIKA: 
-       (100% Lebar Layar - Total Gap) / 3 Kartu 
-       Total Gap = 20px * 2 celah = 40px */
-    
-    flex: 0 0 calc((100% - 40px) / 3);
-    width: calc((100% - 40px) / 3);
-    max-width: calc((100% - 40px) / 3); /* Paksa jangan lebih */
+    /* Gunakan Lebar Fix (320px) yang Proporsional. */
+    /* Ini akan memaksa 3 kartu muncul di layar desktop standar. */
+    flex: 0 0 320px; 
+    width: 320px;
     
     /* LAYOUT DALAM KARTU (Kiri-Kanan) */
     display: flex !important;
@@ -679,73 +669,43 @@ body {
     padding: 15px;
     box-shadow: 0 2px 6px rgba(0,0,0,0.05);
     min-height: 80px;
+    transition: all 0.2s;
 }
 
-/* RESPONSIF (Wajib agar tidak hancur di HP) */
-@media (max-width: 1024px) {
-    /* Tablet: 2 Kartu */
+/* 4. ResponsiF (Opsional, tapi penting) */
+@media (max-width: 1080px) {
+    /* Di layar yang sedikit lebih kecil, perkecil sedikit */
     .room-card-item {
-        flex: 0 0 calc((100% - 20px) / 2);
-        width: calc((100% - 20px) / 2);
-        max-width: calc((100% - 20px) / 2);
+        flex: 0 0 280px;
+        width: 280px;
+    }
+}
+@media (max-width: 768px) {
+    /* Tablet/Layar Sempit: 2 kartu terlihat */
+    .room-card-item {
+        flex: 0 0 calc((100% - 15px) / 2);
+        width: calc((100% - 15px) / 2);
     }
 }
 
-@media (max-width: 600px) {
-    /* HP: 1 Kartu */
-    .room-card-item {
-        flex: 0 0 95%;
-        width: 95%;
-        max-width: 95%;
-    }
-}
-
-/* 5. TEXT INFO (Kiri) */
-.room-info {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    /* Batasi lebar teks agar tidak menabrak badge */
-    max-width: 65%; 
-    overflow: hidden;
-}
-
-.room-info h4 {
-    margin: 0;
-    font-size: 13px;
-    font-weight: 700;
-    white-space: nowrap;      /* Jangan turun baris */
-    overflow: hidden;         /* Potong kalau kepanjangan */
-    text-overflow: ellipsis;  /* Kasih titik-titik (...) */
-    color: var(--text-main);
-}
-
-.room-info p {
-    margin: 0;
-    font-size: 10px;
-    color: var(--text-muted);
-}
-
-/* 6. BADGE (Kanan) - PASTIKAN MUNCUL */
+/* 5. BADGE FIX (Pastikan muncul dan tidak hilang) */
 .badge {
-    flex-shrink: 0; /* JANGAN MENGECIL */
+    flex-shrink: 0;
     padding: 5px 12px;
     border-radius: 50px;
     font-size: 10px;
     font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
     white-space: nowrap;
 }
 
-/* WARNA BADGE (Pakai !important biar ga ketimpa) */
+/* WARNA BADGE */
 .badge-black {
-    background-color: #1e293b !important; /* Hitam/Abu Tua */
+    background-color: #1e293b !important;
     color: #ffffff !important;
 }
-
 .badge-red {
-    background-color: #ef4444 !important; /* Merah */
+    background-color: #ef4444 !important;
     color: #ffffff !important;
 }
 
