@@ -20,6 +20,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const formName = document.getElementById('formBorrowerName');
     if(formName) formName.value = savedName || '';
 
+    // === KODE BARU: AUTO-FILL DIVISI ===
+    const savedDivision = localStorage.getItem('userDivision');
+    const sbuSelect = document.querySelector('select[name="sbu"]'); // Dropdown Divisi
+
+    if (sbuSelect && savedDivision) {
+        console.log("Auto-filling Division:", savedDivision); // Cek di console
+        sbuSelect.value = savedDivision; 
+    }
+
     // Tombol Sign Out
     const signOutBtn = document.querySelector('.sign-out-btn');
     if (signOutBtn) {

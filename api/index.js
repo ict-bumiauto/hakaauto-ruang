@@ -170,5 +170,42 @@ app.put('/api/bookings/:ticketNumber', async (req, res) => {
     }
 });
 
+// === ENDPOINT LOGIN (UPDATE: DENGAN DIVISI) ===
+app.post('/api/login', async (req, res) => {
+    const { email } = req.body;
+
+    if (!email || !email.endsWith('@hakaauto.co.id')) {
+        return res.status(400).json({ message: "Gunakan email kantor (@hakaauto.co.id)" });
+    }
+
+    try {
+        // Ambil data user LENGKAP (termasuk division)
+        const { data, error } = await supabase
+            .from('users')
+            .select('*')
+            .eq('email', email)
+            .single();
+
+        if (error || !data) {
+            return res.status(401).json({ message: "Akses Ditolak: Email Anda belum terdaftar di database." });
+        }
+
+        // Kirim data ke frontend
+        res.status(200).json({
+            message: "Login Berhasil",
+            user: {
+                name: data.name,
+                email: data.email,
+                role: data.role,
+                division: data.division // <--- INI PENTING!
+            }
+        });
+
+    } catch (err) {
+        console.error("Login Error:", err);
+        res.status(500).json({ message: "Terjadi kesalahan server." });
+    }
+});
+
 // WAJIB UNTUK VERCEL
 module.exports = app;
