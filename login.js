@@ -1,105 +1,73 @@
 document.addEventListener('DOMContentLoaded', function() {
     
-    // ============================================================
-    // 1. KONFIGURASI API
-    // ============================================================
+    // URL Backend
     const LOGIN_API_URL = '/api/login'; 
 
-    // ============================================================
-    // 2. AMBIL ELEMENT HTML (DENGAN PENGECEKAN)
-    // ============================================================
+    // Ambil Elemen
     const loginForm = document.getElementById('loginForm');
     const emailInput = document.getElementById('email');
-    
-    // Kita cari element dengan id="password"
-    // Jika di HTML masih id="whatsapp", ini akan bernilai null
     const passwordInput = document.getElementById('password'); 
-    
     const submitBtn = document.querySelector('.submit-btn');
 
-    // ============================================================
-    // 3. LOGIKA UTAMA
-    // ============================================================
-    if (loginForm) {
-        loginForm.addEventListener('submit', async function(event) {
-            event.preventDefault(); // Cegah reload halaman
-
-            // --- TAHAP CEK ERROR HTML (PENTING) ---
-            // Ini untuk mencegah error "Cannot read properties of null"
-            if (!emailInput || !passwordInput) {
-                alert("SYSTEM ERROR: Element Input tidak ditemukan!\n\nPastikan di file HTML:\n1. Input Email punya id='email'\n2. Input Password punya id='password' (bukan 'whatsapp')");
-                return; // Stop script biar gak crash
-            }
-
-            // --- AMBIL DATA INPUT ---
-            const email = emailInput.value.trim().toLowerCase(); 
-            const password = passwordInput.value.trim();
-
-            // --- VALIDASI INPUT ---
-            if (!email || !password) {
-                alert("Mohon lengkapi Email dan Password.");
-                return;
-            }
-
-            if (!email.endsWith('@hakaauto.co.id')) {
-                alert("Akses Ditolak: Wajib menggunakan email kantor (@hakaauto.co.id)!");
-                return;
-            }
-
-            // --- UI LOADING STATE ---
-            const originalText = submitBtn.innerText;
-            submitBtn.innerText = "⏳ Verifying...";
-            submitBtn.disabled = true;
-            submitBtn.style.opacity = "0.7";
-            submitBtn.style.cursor = "not-allowed";
-
-            try {
-                // --- KIRIM KE BACKEND ---
-                const response = await fetch(LOGIN_API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        email: email, 
-                        password: password 
-                    }) 
-                });
-
-                const result = await response.json();
-
-                if (response.ok) {
-                    // === LOGIN SUKSES ===
-                    console.log("Login Success:", result.user);
-
-                    // Simpan data ke memori browser
-                    localStorage.setItem('currentUser', result.user.name);
-                    localStorage.setItem('userEmail', result.user.email);
-                    localStorage.setItem('userRole', result.user.role);
-                    
-                    // Simpan Divisi (untuk auto-fill form nanti)
-                    localStorage.setItem('userDivision', result.user.division || ''); 
-
-                    // Redirect sesuai Jabatan
-                    if (result.user.role === 'admin') {
-                        window.location.href = '/admin';
-                    } else {
-                        window.location.href = '/dashboard';
-                    }
-
-                } else {
-                    // === LOGIN GAGAL (Password Salah / User Tidak Ada) ===
-                    alert("❌ Login Gagal: " + result.message);
-                }
-
-            } catch (error) {
-                console.error("Network Error:", error);
-                alert("⚠️ Terjadi kesalahan koneksi ke server.");
-            } finally {
-                // --- KEMBALIKAN TOMBOL ---
-                submitBtn.innerText = originalText;
-                submitBtn.disabled = false;
-                submitBtn.style.opacity = "1";
-                submitBtn.style.cursor = "pointer";
-            }
-        });
+    // --- CEK APAKAH HTML SUDAH BENAR? ---
+    if (!loginForm) {
+        console.error("CRITICAL ERROR: <form id='loginForm'> tidak ditemukan di HTML!");
+        return;
     }
+
+    loginForm.addEventListener('submit', async function(event) {
+        // 1. CEGAH FORM RELOAD HALAMAN (Wajib di baris pertama)
+        event.preventDefault(); 
+
+        // 2. CEK INPUT
+        if (!emailInput || !passwordInput) {
+            alert("ERROR KODE: Input Email atau Password tidak ditemukan!\nPastikan id='email' dan id='password' ada di HTML.");
+            return;
+        }
+
+        const email = emailInput.value.trim();
+        const password = passwordInput.value.trim();
+
+        // 3. UI LOADING
+        const originalText = submitBtn.innerText;
+        submitBtn.innerText = "⏳ Checking...";
+        submitBtn.disabled = true;
+
+        try {
+            // 4. KIRIM DATA (POST)
+            const response = await fetch(LOGIN_API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+
+            // Cek jika error 404/405/500
+            if (response.status === 404 || response.status === 405) {
+                throw new Error("Jalur API tidak ditemukan (Cek vercel.json)");
+            }
+
+            const result = await response.json();
+
+            if (response.ok) {
+                // === SUKSES ===
+                localStorage.setItem('currentUser', result.user.name);
+                localStorage.setItem('userEmail', result.user.email);
+                localStorage.setItem('userRole', result.user.role);
+                localStorage.setItem('userDivision', result.user.division || ''); 
+
+                // Redirect
+                window.location.href = (result.user.role === 'admin') ? '/admin' : '/dashboard';
+            } else {
+                // === GAGAL (Password Salah) ===
+                alert("Login Gagal: " + result.message);
+            }
+
+        } catch (error) {
+            console.error("Login Error:", error);
+            alert("Terjadi kesalahan sistem: " + error.message);
+        } finally {
+            submitBtn.innerText = originalText;
+            submitBtn.disabled = false;
+        }
+    });
 });

@@ -18,6 +18,21 @@ const RESEND_API_KEY = 're_hSLnyXYk_3F79zUuofZkBTUsSsXQqv1fQ';
 const ADMIN_EMAIL = 'ict@hakaauto.co.id'; 
 const FROM_EMAIL = 'Booking System <no-reply@ruang.bumiauto.works>';
 
+// 1. Handle Login (POST)
+// Kita pasang di dua rute sekaligus biar aman
+app.post(['/api/login', '/login'], async (req, res) => {
+    // ... (Logika login database seperti sebelumnya) ...
+    // Copy logic login yang tadi ada di sini
+    const { email, password } = req.body;
+    // ... query supabase ...
+    // ... res.json(...) ...
+});
+
+// 2. Handle Error "Cannot GET" (Biar gak bingung)
+app.get(['/api/login', '/login'], (req, res) => {
+    res.status(405).send("Error: Login harus menggunakan metode POST, bukan GET. (Cek JavaScript Anda)");
+});
+
 // Inisialisasi Library
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 const resend = new Resend(RESEND_API_KEY);
