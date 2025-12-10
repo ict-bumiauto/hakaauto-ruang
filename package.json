@@ -1,9 +1,10 @@
 {
   "name": "pinjam-ruang-bumi-auto",
   "version": "1.0.0",
-  "description": "Booking System Backend",
+  "description": "Booking System",
   "main": "api/index.js",
   "scripts": {
+    "build": "echo 'No build step necessary' && exit 0",
     "start": "node api/index.js"
   },
   "dependencies": {
@@ -11,8 +12,5 @@
     "cors": "^2.8.5",
     "@supabase/supabase-js": "^2.39.3",
     "resend": "^3.1.0"
-  },
-  "engines": {
-    "node": "18.x"
   }
 }
