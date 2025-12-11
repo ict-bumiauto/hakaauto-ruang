@@ -1,5 +1,29 @@
 // GANTI DENGAN LINK API VERCEL ANDA
-const API_URL = 'https://pinjam-ruang-bumi-auto.vercel.app/api/bookings'; 
+const API_URL = 'https://pinjam-ruang-bumi-auto.vercel.app/api/bookings';
+
+// ==========================================
+// SATPAM HALAMAN (Taruh Paling Atas app.js)
+// ==========================================
+(function() {
+    const user = localStorage.getItem('currentUser');
+    
+    // Cek: Apakah kita sedang di halaman Form Booking?
+    // Caranya: Cek apakah ada elemen form dengan ID 'bookingForm'
+    const isDashboardPage = document.getElementById('bookingForm'); 
+
+    // ATURAN: Jika ini Halaman Form TAPI tidak ada User Login
+    if (isDashboardPage && !user) {
+        console.warn("⛔ Intruder detected! Redirecting to login...");
+        alert("Anda harus login untuk mengakses halaman ini!");
+        
+        // TENDANG KE LOGIN
+        window.location.href = '/'; 
+        
+        // Hentikan semua proses di bawahnya
+        throw new Error("Access Denied"); 
+    }
+})();
+// ==========================================
 
 document.addEventListener('DOMContentLoaded', function() {
     console.log("🚀 App.js Dimulai...");

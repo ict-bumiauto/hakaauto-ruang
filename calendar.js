@@ -11,6 +11,22 @@ document.addEventListener('DOMContentLoaded', function() {
     const signOutBtn = document.querySelector('.sign-out-btn');
     const newBookingBtn = document.querySelector('.btn-primary'); // Tombol New Booking
 
+    // LOGIKA TOMBOL
+    if (newBookingBtn) {
+        newBookingBtn.addEventListener('click', function(e) {
+            e.preventDefault(); // Matikan link bawaan
+
+            if (!savedName) {
+                // JIKA GUEST (Belum Login)
+                alert("⛔ Akses Ditolak!\n\nAnda harus Login terlebih dahulu untuk melakukan booking.");
+                window.location.href = '/'; // Lempar ke Login
+            } else {
+                // JIKA USER (Sudah Login)
+                window.location.href = '/dashboard'; // Lanjut ke Form
+            }
+        });
+    }
+
     if (savedName) {
         // --- JIKA SUDAH LOGIN ---
         if(headerName) headerName.innerText = savedName;
