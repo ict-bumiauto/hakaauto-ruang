@@ -1,19 +1,16 @@
-// GANTI DENGAN LINK API VERCEL ANDA (Pastikan link ini benar)
+// GANTI DENGAN LINK API VERCEL ANDA
 const API_URL = '/api/bookings'; 
 
 // ==========================================
-// 1. SATPAM HALAMAN (Security Check)
+// 1. SATPAM HALAMAN (Security)
 // ==========================================
 (function() {
     const user = localStorage.getItem('currentUser');
-    
-    // Cek apakah ini halaman Form Booking?
     const bookingForm = document.getElementById('bookingForm'); 
 
-    // ATURAN: Jika ada Form TAPI tidak ada User Login -> TENDANG
+    // Jika ada Form Booking TAPI User belum login -> Tendang ke Login
     if (bookingForm && !user) {
-        console.warn("⛔ Intruder detected! Redirecting to login...");
-        alert("Akses Ditolak: Anda harus login untuk mengakses halaman ini!");
+        alert("Akses Ditolak: Anda harus login dulu!");
         window.location.href = '/login'; 
         throw new Error("Access Denied"); 
     }
@@ -23,293 +20,179 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log("🚀 App.js Dimulai...");
 
     // ============================================================
-    // 2. AUTH & INITIALIZATION
+    // 2. INITIALIZATION & AUTO-FILL
     // ============================================================
     const savedName = localStorage.getItem('currentUser');
 
-    // Setup Header Nama User
+    // Header Nama
     const headerName = document.getElementById('headerUserName');
     if(headerName) headerName.innerText = savedName || 'Guest';
 
-    // Auto-fill Nama Peminjam
+    // Auto-fill Form
     const formName = document.getElementById('formBorrowerName');
     if(formName) formName.value = savedName || '';
 
-    // Auto-fill Divisi
     const savedDivision = localStorage.getItem('userDivision');
     const sbuSelect = document.querySelector('select[name="sbu"]'); 
     if (sbuSelect && savedDivision) sbuSelect.value = savedDivision; 
 
-    // Auto-fill WhatsApp
     const savedPhone = localStorage.getItem('userPhone');
-    const waInput = document.getElementById('whatsapp') || 
-                    document.querySelector('input[name="whatsappNumber"]') || 
-                    document.querySelector('input[name="whatsapp"]');
+    const waInput = document.getElementById('whatsapp') || document.querySelector('input[name="whatsappNumber"]');
+    if (waInput && savedPhone) waInput.value = savedPhone;
 
-    if (waInput && savedPhone) {
-        waInput.value = savedPhone;
-    }
-
-    // Tombol Sign Out
+    // Sign Out
     const signOutBtn = document.querySelector('.sign-out-btn');
     if (signOutBtn) {
-        signOutBtn.addEventListener('click', (e) => {
-            e.preventDefault(); 
-            localStorage.clear(); 
-            window.location.href = '/login'; 
-        });
-    }
-
-    // Admin Mode Visual
-    const userRole = localStorage.getItem('userRole');
-    if (userRole === 'admin') {
-        const pageTitle = document.querySelector('.page-title h1');
-        if (pageTitle) {
-            pageTitle.innerText = "Admin Booking Mode";
-            pageTitle.style.color = "#Eab308";
-        }
+        signOutBtn.onclick = (e) => {
+            e.preventDefault(); localStorage.clear(); window.location.href = '/login'; 
+        };
     }
 
     // ============================================================
-    // 3. GENERATE JAM (TIME PICKER FIX)
+    // 3. GENERATE TIME DROPDOWNS (JAM)
     // ============================================================
     function populateTimeSelects() {
-        // Kita pakai querySelector agar lebih kebal (bisa baca name="" atau id="")
-        const startSelect = document.querySelector('select[name="startTime"]') || document.getElementById('startTime');
-        const endSelect = document.querySelector('select[name="endTime"]') || document.getElementById('endTime');
+        const startSelect = document.querySelector('select[name="startTime"]');
+        const endSelect = document.querySelector('select[name="endTime"]');
 
         if (!startSelect || !endSelect) return;
 
-        // Reset isi
         startSelect.innerHTML = '<option value="">Select time</option>';
         endSelect.innerHTML = '<option value="">Select time</option>';
 
-        const startHour = 8; // 08:00
-        const endHour = 18;  // 18:00
-
-        for (let i = startHour; i <= endHour; i++) {
-            const hour = i.toString().padStart(2, '0');
-            
-            // Opsi :00
-            const val00 = `${hour}:00`;
-            startSelect.add(new Option(val00, val00));
-            endSelect.add(new Option(val00, val00));
-
-            // Opsi :30 (Kecuali jam terakhir)
-            if (i < endHour) {
-                const val30 = `${hour}:30`;
-                startSelect.add(new Option(val30, val30));
-                endSelect.add(new Option(val30, val30));
+        for (let i = 8; i <= 18; i++) { // 08:00 - 18:00
+            const h = i.toString().padStart(2, '0');
+            startSelect.add(new Option(`${h}:00`, `${h}:00`));
+            endSelect.add(new Option(`${h}:00`, `${h}:00`));
+            if (i < 18) {
+                startSelect.add(new Option(`${h}:30`, `${h}:30`));
+                endSelect.add(new Option(`${h}:30`, `${h}:30`));
             }
         }
-
-        // Logika Pintar: Kalau Start dipilih, End otomatis maju
+        // Auto-select end time
         startSelect.addEventListener('change', function() {
             if(!this.value) return;
             let [h, m] = this.value.split(':').map(Number);
-            
-            // Tambah 1 jam otomatis
-            h += 1; 
-            const nextTime = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
-            
-            // Cek apakah jam itu ada di opsi endSelect?
-            const exist = [...endSelect.options].some(o => o.value === nextTime);
-            if(exist) endSelect.value = nextTime;
+            h += 1; // Default durasi 1 jam
+            const next = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+            const exist = [...endSelect.options].some(o => o.value === next);
+            if(exist) endSelect.value = next;
         });
     }
-
-    // PANGGIL FUNGSINYA AGAR JAM MUNCUL
     populateTimeSelects();
 
-
     // ============================================================
-    // 4. ADD-ONS LOGIC
+    // 4. FETCH DATA (UNTUK STATISTIK & CEK BENTROK) - INI YG HILANG TADI
     // ============================================================
-    const addonsToggle = document.getElementById('addonsToggle');
-    const addonsContainer = document.getElementById('addonsContainer');
-    const addonsList = document.getElementById('addonsList');
-    const btnAddRow = document.getElementById('btnAddRow');
-
-    function createAddonRow() {
-        const row = document.createElement('div');
-        row.className = 'addon-row';
-        row.innerHTML = `
-            <select name="addonType[]" class="input-field addon-select"><option value="Snack">Snack</option><option value="Fasilitas">Fasilitas</option></select>
-            <input type="text" name="addonDetail[]" class="input-field addon-input" placeholder="Detail...">
-            <button type="button" class="btn-remove-row">✕</button>`;
-        return row;
-    }
-    
-    if (addonsToggle) {
-        addonsToggle.addEventListener('change', function() {
-            if(addonsContainer) {
-                addonsContainer.style.display = this.checked ? 'block' : 'none';
-                if(this.checked && addonsList && addonsList.children.length === 0) addonsList.appendChild(createAddonRow());
-                if(!this.checked && addonsList) addonsList.innerHTML = '';
-            }
-        });
-    }
-    if (btnAddRow) btnAddRow.addEventListener('click', () => { 
-        if(addonsList && addonsList.children.length < 2) addonsList.appendChild(createAddonRow()); 
-    });
-    if (addonsList) addonsList.addEventListener('click', (e) => { 
-        if(e.target.classList.contains('btn-remove-row')) e.target.closest('.addon-row').remove(); 
-    });
-
-
-    // ============================================================
-    // 5. KAPASITAS RUANGAN (SOFT BLOCK)
-    // ============================================================
-    const roomSelectEl = document.getElementById('roomSelect'); // Pastikan ID di HTML id="roomSelect"
-    const participantsInput = document.getElementById('participants') || document.getElementById('numParticipants');
-    const capacityMsg = document.getElementById('capacityMsg');
-
-    function checkCapacityVisual() {
-        if(!roomSelectEl || !participantsInput) return false;
-
-        const sel = roomSelectEl.options[roomSelectEl.selectedIndex];
-        // Pastikan di HTML option ada data-capacity="10"
-        const max = parseInt(sel.getAttribute('data-capacity')) || 0; 
-        const current = parseInt(participantsInput.value) || 0;
-
-        if (max > 0 && current > max) {
-            participantsInput.classList.add('input-error');
-            if(capacityMsg) {
-                capacityMsg.style.display = 'block';
-                capacityMsg.innerText = `⚠️ Melebihi standar (${max} orang), namun tetap bisa diajukan.`;
-            }
-            return true; // Over capacity
-        } else {
-            participantsInput.classList.remove('input-error');
-            if(capacityMsg) capacityMsg.style.display = 'none';
-            return false;
-        }
-    }
-
-    if (roomSelectEl && participantsInput) {
-        roomSelectEl.addEventListener('change', checkCapacityVisual);
-        participantsInput.addEventListener('input', checkCapacityVisual);
-    }
-
-
-    // ============================================================
-    // 6. DASHBOARD WIDGET (ROOM STATUS)
-    // ============================================================
-    async function updateRoomStatus() {
+    async function initDashboardData() {
         try {
-            // Cek apakah ada widget ruangan di halaman ini? Kalau gak ada, skip.
-            if(!document.querySelector('.room-card-item')) return;
-
-            const response = await fetch(API_URL);
-            if (!response.ok) return;
-            const allBookings = await response.json();
+            const res = await fetch(API_URL);
+            if(!res.ok) return;
+            const allBookings = await res.json();
             
-            const now = new Date();
-            const todayStr = new Date().toLocaleDateString('en-CA'); // YYYY-MM-DD
-            
-            const bookedRooms = allBookings
-                .filter(b => b.bookingDate === todayStr && b.status === 'Approved')
-                .map(b => b.roomName.trim());
+            // Update Sidebar Statistik
+            updateStatsAndRecent(allBookings);
 
-            document.querySelectorAll('.room-card-item').forEach(card => {
-                const titleEl = card.querySelector('h4');
-                const badgeEl = card.querySelector('span.badge');
-                
-                if (titleEl && badgeEl) {
-                    const roomName = titleEl.innerText.trim();
-                    if (bookedRooms.includes(roomName)) {
-                        badgeEl.innerText = 'Booked';
-                        badgeEl.className = 'badge badge-red';
-                    } else {
-                        badgeEl.innerText = 'Available';
-                        badgeEl.className = 'badge badge-black';
-                    }
-                }
-            });
-            
-            // Update Statistik
-            updateDashboardStats(allBookings);
-
-        } catch (error) {
-            console.error("Gagal update widget:", error);
-        }
+        } catch(e) { console.error("Gagal load data dashboard:", e); }
     }
-    // Jalankan update widget
-    updateRoomStatus();
+    initDashboardData(); // PANGGIL LANGSUNG SAAT LOAD
 
-    function updateDashboardStats(allBookings) {
+    function updateStatsAndRecent(allBookings) {
+        // A. Update Angka Statistik
         const statsList = document.querySelector('.quick-stats .stats-list');
-        if (statsList) {
-            statsList.children[0].querySelector('.stat-value').innerText = allBookings.length;
-            statsList.children[1].querySelector('.stat-value').innerText = allBookings.filter(b => b.status === 'Approved').length;
-            statsList.children[2].querySelector('.stat-value').innerText = allBookings.filter(b => b.status === 'Pending').length;
+        if (statsList) { // Pastikan elemennya ada di dashboard.html
+            const total = allBookings.length;
+            const approved = allBookings.filter(b => b.status === 'Approved').length;
+            const pending = allBookings.filter(b => b.status === 'Pending').length;
+            
+            // Asumsi urutan HTML: Total -> Approved -> Pending
+            const items = statsList.querySelectorAll('.stat-item .stat-value');
+            if(items.length >= 3) {
+                items[0].innerText = total;
+                items[1].innerText = approved;
+                items[2].innerText = pending;
+            }
+        }
+
+        // B. Update Recent Bookings Sidebar
+        const recentContainer = document.querySelector('.recent-bookings'); // Wadah sidebar kanan
+        if (recentContainer) {
+            // Kita cari list di dalamnya atau buat baru
+            let listDiv = recentContainer.querySelector('.recent-list') || recentContainer;
+            
+            const recentData = allBookings.slice(0, 5); // 5 Data terbaru
+            
+            if (recentData.length === 0) {
+                listDiv.innerHTML = '<h3>Recent Bookings</h3><p style="color:#999; font-size:12px;">No bookings yet.</p>';
+            } else {
+                let html = '<h3>Recent Bookings</h3><ul style="list-style:none; padding:0;">';
+                recentData.forEach(b => {
+                    let color = b.status === 'Approved' ? '#10B981' : (b.status === 'Pending' ? '#F59E0B' : '#EF4444');
+                    html += `
+                    <li style="border-bottom:1px solid #eee; padding-bottom:8px; margin-bottom:8px;">
+                        <div style="display:flex; justify-content:space-between;">
+                            <strong style="font-size:13px;">${b.borrowerName}</strong>
+                            <span style="font-size:10px; color:${color}; border:1px solid ${color}; padding:1px 4px; border-radius:4px;">${b.status}</span>
+                        </div>
+                        <div style="font-size:11px; color:#666;">${b.roomName}</div>
+                        <div style="font-size:11px; color:#999;">${b.bookingDate}</div>
+                    </li>`;
+                });
+                html += '</ul>';
+                listDiv.innerHTML = html;
+            }
         }
     }
 
 
     // ============================================================
-    // 7. HANDLE SUBMIT FORM
+    // 5. HANDLE SUBMIT FORM (BOOKING)
     // ============================================================
     const form = document.getElementById('bookingForm');
     const submitBtn = document.querySelector('.submit-btn');
 
     if (form) {
         form.addEventListener('submit', async function(event) {
-            event.preventDefault(); // Stop Refresh
+            event.preventDefault();
 
-            // A. Cek Integrity Pact
+            // Cek Integrity
             const integrity = form.querySelector('input[name="integrity"]');
             if (integrity && !integrity.checked) {
-                alert('Please agree to the Integrity Pact Agreement.');
-                return;
+                alert('Please agree to the Integrity Pact.'); return;
             }
 
-            // B. Cek Kapasitas (Modal Konfirmasi)
-            if (checkCapacityVisual()) {
-                if(!confirm("⚠️ PERINGATAN KAPASITAS\n\nJumlah peserta melebihi kapasitas ruangan.\nApakah Anda yakin ingin tetap melanjutkan?")) {
-                    return; // Batal submit kalau user klik Cancel
-                }
-            }
-
-            // C. UI Loading
-            const originalBtnText = submitBtn.innerText;
-            submitBtn.innerText = "⏳ Sending Request...";
+            // UI Loading
+            const originalText = submitBtn.innerText;
+            submitBtn.innerText = "⏳ Sending...";
             submitBtn.disabled = true;
 
             try {
-                // D. Siapkan Data Add-ons
+                // Ambil Addons
                 let addonsData = [];
                 document.querySelectorAll('select[name="addonType[]"]').forEach((sel, i) => {
                     const det = document.querySelectorAll('input[name="addonDetail[]"]')[i].value;
                     if(det.trim()) addonsData.push({ type: sel.value, detail: det });
                 });
 
-                // E. Siapkan Data Booking
+                // Siapkan Data
                 const bookingData = {
                     ticketNumber: 'T-' + Date.now(),
                     borrowerName: document.getElementById('formBorrowerName').value,
-                    
-                    // --- PENTING: EMAIL STAFF ---
-                    borrowerEmail: localStorage.getItem('userEmail'), 
-                    // ----------------------------
-
+                    borrowerEmail: localStorage.getItem('userEmail'), // EMAIL STAFF
                     department: document.querySelector('select[name="sbu"]').value,
                     whatsapp: document.querySelector('input[name="whatsappNumber"]').value,
                     purpose: document.getElementById('purpose').value,
-                    
-                    // Gunakan querySelector agar aman (name="...")
-                    roomName: document.querySelector('select[name="roomName"]').value,
-                    bookingDate: document.querySelector('input[name="date"]').value, // atau ID bookingDate
+                    bookingDate: document.querySelector('input[name="date"]').value,
                     startTime: document.querySelector('select[name="startTime"]').value,
                     endTime: document.querySelector('select[name="endTime"]').value,
+                    roomName: document.querySelector('select[name="roomName"]').value,
                     participants: document.getElementById('participants')?.value || document.getElementById('numParticipants')?.value,
-
                     addOns: addonsData,
                     notes: document.getElementById('notes')?.value || "",
                     status: (localStorage.getItem('userRole') === 'admin') ? 'Approved' : 'Pending'
                 };
 
-                // F. Kirim ke Backend
+                // Kirim ke Backend
                 const response = await fetch(API_URL, {
                     method: 'POST',
                     headers: {'Content-Type':'application/json'},
@@ -319,20 +202,65 @@ document.addEventListener('DOMContentLoaded', function() {
                 const result = await response.json();
 
                 if (response.ok) {
-                    alert("✅ Booking Berhasil Terkirim!");
-                    window.location.href = '/calendar'; // Redirect ke Kalender
+                    alert("✅ Booking Berhasil!");
+                    window.location.href = '/calendar';
                 } else {
-                    alert(`❌ Gagal: ${result.message}`);
+                    alert("❌ Gagal: " + result.message);
                 }
 
             } catch (error) {
                 console.error(error);
-                alert("⚠️ Terjadi kesalahan koneksi.");
+                alert("Error Koneksi.");
             } finally {
-                submitBtn.innerText = originalBtnText;
+                submitBtn.innerText = originalText;
                 submitBtn.disabled = false;
             }
         });
+    }
+
+    // ============================================================
+    // 6. HELPER: ADD-ONS DYNAMIC ROW
+    // ============================================================
+    const btnAddRow = document.getElementById('btnAddRow');
+    const addonsList = document.getElementById('addonsList');
+    if (btnAddRow && addonsList) {
+        btnAddRow.addEventListener('click', () => {
+             const div = document.createElement('div');
+             div.className = 'addon-row';
+             div.innerHTML = `
+                <select name="addonType[]" class="input-field addon-select"><option>Snack</option><option>Fasilitas</option></select>
+                <input type="text" name="addonDetail[]" class="input-field addon-input" placeholder="Detail...">
+                <button type="button" class="btn-remove-row" onclick="this.parentElement.remove()">✕</button>
+             `;
+             addonsList.appendChild(div);
+        });
+    }
+    const addonsToggle = document.getElementById('addonsToggle');
+    if(addonsToggle) {
+        addonsToggle.addEventListener('change', function() {
+            document.getElementById('addonsContainer').style.display = this.checked ? 'block' : 'none';
+        });
+    }
+
+    // ============================================================
+    // 7. HELPER: KAPASITAS
+    // ============================================================
+    const roomSelect = document.getElementById('roomSelect');
+    const partInput = document.getElementById('participants') || document.getElementById('numParticipants');
+    const capMsg = document.getElementById('capacityMsg');
+    
+    if(roomSelect && partInput) {
+        const checkCap = () => {
+            const max = parseInt(roomSelect.options[roomSelect.selectedIndex].getAttribute('data-capacity')) || 0;
+            const cur = parseInt(partInput.value) || 0;
+            if(max > 0 && cur > max) {
+                if(capMsg) { capMsg.style.display='block'; capMsg.innerText=`⚠️ Melebihi kapasitas (${max})`; }
+            } else {
+                if(capMsg) capMsg.style.display='none';
+            }
+        };
+        roomSelect.addEventListener('change', checkCap);
+        partInput.addEventListener('input', checkCap);
     }
 
 });
