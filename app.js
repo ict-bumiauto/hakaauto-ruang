@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // ============================================================
     const savedName = localStorage.getItem('currentUser');
     if (!savedName) {
-        if (!window.location.pathname.includes('index.html') && !window.location.pathname.endsWith('/')) {
+        if (!window.location.pathname.includes('calendar.html') && !window.location.pathname.endsWith('/calendar')) {
              // window.location.href = '/'; 
         }
     }
