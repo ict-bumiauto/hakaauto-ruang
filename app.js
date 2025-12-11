@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const sbuSelect = document.querySelector('select[name="sbu"]'); // Dropdown Divisi
 
     // === KODE BARU: AUTO-FILL WHATSAPP ===
-    const savedPhone = localStorage.getItem('whatsapp');
+    const savedPhone = localStorage.getItem('userPhone');
     // Cari input WA (Sesuaikan name="..." dengan di HTML kamu)
     // Biasanya name="whatsappNumber" atau id="whatsapp"
     const waInput = document.querySelector('input[name="whatsapp"]') || document.getElementById('whatsapp');
