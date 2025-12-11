@@ -24,6 +24,18 @@ document.addEventListener('DOMContentLoaded', function() {
     const savedDivision = localStorage.getItem('userDivision');
     const sbuSelect = document.querySelector('select[name="sbu"]'); // Dropdown Divisi
 
+    // === KODE BARU: AUTO-FILL WHATSAPP ===
+    const savedPhone = localStorage.getItem('whatsapp');
+    // Cari input WA (Sesuaikan name="..." dengan di HTML kamu)
+    // Biasanya name="whatsappNumber" atau id="whatsapp"
+    const waInput = document.querySelector('input[name="whatsapp"]') || document.getElementById('whatsapp');
+
+    if (waInput && savedPhone) {
+        waInput.value = savedPhone;
+        // Opsional: Buat read-only biar gak bisa diubah sembarangan
+        // waInput.readOnly = true; 
+    }
+
     if (sbuSelect && savedDivision) {
         console.log("Auto-filling Division:", savedDivision); // Cek di console
         sbuSelect.value = savedDivision; 

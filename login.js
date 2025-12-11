@@ -53,7 +53,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 localStorage.setItem('currentUser', result.user.name);
                 localStorage.setItem('userEmail', result.user.email);
                 localStorage.setItem('userRole', result.user.role);
-                localStorage.setItem('userDivision', result.user.division || ''); 
+                localStorage.setItem('userDivision', result.user.division || '');
+                
+                // TAMBAHKAN BARIS INI (Simpan No WA):
+                    localStorage.setItem('userPhone', result.user.phone || '');
 
                 // Redirect
                 window.location.href = (result.user.role === 'admin') ? '/admin' : '/dashboard';
