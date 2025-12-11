@@ -1605,3 +1605,94 @@ body.dark-mode .error-bg {
 input::placeholder {
     color: #CBD5E1; /* Warna placeholder lebih pudar */
 }
+
+/* =========================================
+   LAYOUT KALENDER & SIDEBAR (Fixed)
+========================================= */
+
+/* 1. Pembungkus Utama agar tidak nempel pinggir layar */
+.main-container {
+    max-width: 1280px;      /* Batas lebar maksimal enak dilihat */
+    margin: 0 auto;         /* Posisi Tengah */
+    padding: 20px;
+}
+
+/* 2. Grid Layout: Kiri (Kalender) & Kanan (Sidebar) */
+.calendar-layout {
+    display: flex;
+    gap: 25px;              /* Jarak antar kolom */
+    align-items: flex-start; /* Rata atas */
+    margin-bottom: 30px;
+}
+
+/* Kolom Kiri: Kalender (Otomatis ambil sisa ruang) */
+.calendar-wrapper {
+    flex: 1; 
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 25px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+    border: 1px solid #F1F5F9;
+}
+
+/* Kolom Kanan: Sidebar (Lebar Tetap) */
+.dashboard-sidebar {
+    width: 320px;           /* Lebar fix sidebar */
+    flex-shrink: 0;         /* Jangan mengecil */
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* 3. Kartu di Sidebar (Stats & Recent) */
+.sidebar-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+    border: 1px solid #F1F5F9;
+}
+
+/* Judul Sidebar */
+.sidebar-card h3 {
+    margin: 0 0 15px 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: #1E293B;
+}
+
+/* Styling Statistik Kecil */
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+}
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background: #F8FAFC;
+    border-radius: 8px;
+    font-size: 13px;
+    color: #64748B;
+}
+.stat-value {
+    font-weight: 700;
+    color: #0F172A;
+    font-size: 15px;
+}
+
+/* RESPONSIF: Kalau di HP, Sidebar turun ke bawah */
+@media (max-width: 1024px) {
+    .calendar-layout {
+        flex-direction: column; /* Jadi tumpuk atas-bawah */
+    }
+    .dashboard-sidebar {
+        width: 100%; /* Sidebar jadi lebar penuh */
+        flex-direction: row; /* Sidebar isinya jejer ke samping (opsional) */
+    }
+}
+@media (max-width: 768px) {
+    .dashboard-sidebar { flex-direction: column; }
+}

@@ -18,7 +18,7 @@ const RESEND_API_KEY = 're_hSLnyXYk_3F79zUuofZkBTUsSsXQqv1fQ';
 
 // Pengaturan Email
 const ADMIN_EMAIL = 'ict@hakaauto.co.id'; 
-const FROM_EMAIL = 'ict@hakaauto.co.id'; // Pakai default resend dulu biar aman
+const FROM_EMAIL = 'Haka Auto Booking <booking@ruang.bumiauto.works>'; // Pakai default resend dulu biar aman
 
 // Inisialisasi Library
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -156,22 +156,23 @@ app.post('/api/bookings', async (req, res) => {
         if (error) throw error;
 
         // 3. Kirim Email Notifikasi (Resend)
-        // Kita pakai try-catch terpisah agar kalau email gagal, booking TETAP BERHASIL
         try {
             await resend.emails.send({
                 from: FROM_EMAIL,
                 to: [ADMIN_EMAIL], 
-                subject: `[New Request] ${data.roomName} - ${data.bookingDate}`,
-                html: `
-                    <h3>New Room Booking Request</h3>
-                    <p><b>Name:</b> ${data.borrowerName}</p>
-                    <p><b>Division:</b> ${data.department}</p>
-                    <p><b>Room:</b> ${data.roomName}</p>
-                    <p><b>Time:</b> ${data.startTime} - ${data.endTime}</p>
-                    <p><b>Purpose:</b> ${data.purpose}</p>
-                    <br>
-                    <p>Please check Admin Dashboard to Approve/Reject.</p>
-                `
+                subject: `New Booking: ${data.roomName}`,
+                // Ganti HTML jadi TEXT biasa agar tidak dianggap Spam
+                // Dan pastikan tidak ada http/https link di dalamnya
+                text: `
+                    Name: ${data.borrowerName}
+                    Division: ${data.department}
+                    Room: ${data.roomName}
+                    Date: ${data.bookingDate}
+                    Time: ${data.startTime} - ${data.endTime}
+                    Purpose: ${data.purpose}
+
+                    (Login ke Dashboard Admin untuk Approve)
+                                    `
             });
             console.log("Email sent successfully");
         } catch (emailErr) {
