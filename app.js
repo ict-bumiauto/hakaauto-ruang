@@ -334,6 +334,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (form) {
         form.addEventListener('submit', function(event) {
+        
+        const bookingData = {
+            ticketNumber: 'T-' + Date.now(),
+            borrowerName: document.getElementById('formBorrowerName').value,
+            
+            // --- TAMBAHKAN BARIS INI ---
+            // Ambil email user yang sedang login dari memori browser
+            borrowerEmail: localStorage.getItem('userEmail'), 
+            // ---------------------------
+
+            department: document.querySelector('select[name="sbu"]').value,
+            whatsapp: document.querySelector('input[name="whatsappNumber"]').value,
+            // ... (sisa data lain biarkan sama) ...
+        };
             event.preventDefault();
 
             // 1. Cek Integrity

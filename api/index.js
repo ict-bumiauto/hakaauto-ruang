@@ -43,7 +43,7 @@ app.use(express.json());
 app.get('/api/test', (req, res) => {
     res.json({ 
         status: "Online", 
-        message: "Backend Bumi Auto berjalan normal!",
+        message: "Backend Haka Auto berjalan normal!",
         timestamp: new Date().toISOString()
     });
 });
@@ -189,24 +189,72 @@ app.post('/api/bookings', async (req, res) => {
 });
 
 
-// --- E. UPDATE STATUS (Approve/Reject oleh Admin) ---
+// --- E. UPDATE STATUS (Approve/Reject oleh Admin) + KIRIM EMAIL KE STAFF ---
 app.put('/api/bookings/:ticketNumber', async (req, res) => {
     const { ticketNumber } = req.params;
-    const { status, notes } = req.body;
+    const { status, notes } = req.body; // status: 'Approved' / 'Rejected'
 
     try {
+        // 1. Update Status di Database
         const { data, error } = await supabase
             .from('bookings')
             .update({ status: status, notes: notes })
             .eq('ticketNumber', ticketNumber)
-            .select();
+            .select(); // Penting: .select() mengembalikan data terbaru (termasuk email user)
 
         if (error) throw error;
         
+        const updatedBooking = data[0]; // Data booking yang baru diupdate
         console.log(`Booking ${ticketNumber} updated to ${status}`);
-        res.json(data[0]);
+
+        // 2. KIRIM EMAIL NOTIFIKASI KE STAFF (USER)
+        // Cek apakah ada email peminjamnya?
+        if (updatedBooking.borrowerEmail) {
+            
+            // Tentukan Warna & Pesan berdasarkan Status
+            let subjectStatus = status === 'Approved' ? '✅ Approved' : '❌ Rejected';
+            let color = status === 'Approved' ? '#10B981' : '#EF4444';
+            let message = status === 'Approved' 
+                ? 'Permintaan peminjaman ruang Anda telah <b>DISETUJUI</b>.' 
+                : 'Mohon maaf, permintaan Anda <b>DITOLAK</b>.';
+
+            try {
+                await resend.emails.send({
+                    // PENTING: Gunakan domain verified Anda
+                    from: 'Haka Auto Booking <booking@ruang.bumiauto.works>',
+                    to: [updatedBooking.borrowerEmail], // Kirim ke email Staff
+                    subject: `[${status}] Ruang Meeting: ${updatedBooking.roomName}`,
+                    html: `
+                        <div style="font-family: Arial, sans-serif; color: #333;">
+                            <h2 style="color: ${color};">${subjectStatus}</h2>
+                            <p>Halo <b>${updatedBooking.borrowerName}</b>,</p>
+                            <p>${message}</p>
+                            
+                            <div style="background: #f4f4f5; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                                <p><b>Ruangan:</b> ${updatedBooking.roomName}</p>
+                                <p><b>Tanggal:</b> ${updatedBooking.bookingDate}</p>
+                                <p><b>Jam:</b> ${updatedBooking.startTime} - ${updatedBooking.endTime}</p>
+                                <p><b>Catatan Admin:</b> ${notes || '-'}</p>
+                            </div>
+
+                            <p style="font-size: 12px; color: #888;">
+                                Email ini dikirim otomatis oleh Sistem Booking Haka Auto.
+                            </p>
+                        </div>
+                    `
+                });
+                console.log(`Email notifikasi dikirim ke ${updatedBooking.borrowerEmail}`);
+            } catch (emailErr) {
+                console.error("Gagal kirim email ke user:", emailErr.message);
+            }
+        } else {
+            console.log("Tidak ada email peminjam, skip kirim notifikasi.");
+        }
+
+        res.json(updatedBooking);
 
     } catch (err) {
+        console.error("Update Error:", err);
         res.status(500).json({ message: err.message });
     }
 });
