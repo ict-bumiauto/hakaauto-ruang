@@ -3,15 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal | Bumi Auto Booking System</title>
+    <title>Portal | Haka Auto Booking System</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
     
     <style>
-        /* Styling Khusus Halaman Portal */
+        /* Reset & Base */
+        * { box-sizing: border-box; }
         body {
-            background-color: #F8FAFC;
+            background-color: #F1F5F9;
+            font-family: 'Inter', sans-serif;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -19,75 +20,99 @@
             margin: 0;
             padding: 20px;
         }
+
+        /* Kartu Portal */
         .portal-card {
             background: white;
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            padding: 45px 40px;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08); /* Shadow lebih lembut */
             text-align: center;
-            max-width: 450px;
+            max-width: 420px;
             width: 100%;
-            border: 1px solid #E2E8F0;
+            border: 1px solid #ffffff;
         }
+
+        /* Area Logo */
         .logo-area {
-            margin-bottom: 30px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
-        .logo-area img {
-            height: 40px; /* Sesuaikan tinggi logo */
-            margin-bottom: 15px;
+        
+        /* UPDATE: Styling Logo Image */
+        .logo-img {
+            max-width: 200px; /* Batasi lebar logo agar tidak kegedean */
+            height: auto;     /* Tinggi menyesuaikan proporsi */
+            object-fit: contain;
+            display: block;
         }
+
+        /* Judul & Deskripsi */
         .portal-title {
-            font-size: 22px;
+            font-size: 20px;
             font-weight: 700;
-            color: #1E293B;
-            margin-bottom: 10px;
+            color: #0F172A;
+            margin: 0 0 10px 0;
         }
         .portal-desc {
             color: #64748B;
             font-size: 14px;
-            margin-bottom: 30px;
-            line-height: 1.5;
+            margin-bottom: 35px;
+            line-height: 1.6;
         }
+
+        /* Tombol Aksi */
         .action-btn {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 12px;
             width: 100%;
-            padding: 14px;
+            padding: 16px;
             margin-bottom: 15px;
-            border-radius: 12px;
+            border-radius: 14px;
             font-weight: 600;
             font-size: 14px;
             text-decoration: none;
-            transition: all 0.2s;
+            transition: all 0.2s ease;
             cursor: pointer;
-            border: none;
+            position: relative;
+            overflow: hidden;
         }
-        /* Tombol Login (Biru) */
+
+        /* 1. Tombol Login (Biru Utama) */
         .btn-login {
             background-color: #2563EB;
             color: white;
-            box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+            border: 1px solid transparent;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
         }
         .btn-login:hover {
             background-color: #1D4ED8;
             transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(37, 99, 235, 0.3);
         }
-        /* Tombol Guest (Putih/Outline) */
+
+        /* 2. Tombol Guest (Putih Outline) */
         .btn-guest {
             background-color: white;
-            color: #1E293B;
-            border: 1px solid #CBD5E1;
+            color: #334155;
+            border: 1px solid #E2E8F0;
         }
         .btn-guest:hover {
-            background-color: #F1F5F9;
-            border-color: #94A3B8;
+            background-color: #F8FAFC;
+            border-color: #CBD5E1;
+            transform: translateY(-2px);
         }
+
+        /* Footer Copyright */
         .copyright {
-            margin-top: 30px;
+            margin-top: 35px;
             font-size: 11px;
             color: #94A3B8;
+            letter-spacing: 0.5px;
         }
     </style>
 </head>
@@ -95,20 +120,20 @@
 
     <div class="portal-card">
         <div class="logo-area">
-            <h1 style="color:#2563EB; font-weight:800; letter-spacing:-1px; margin:0;">HAKA AUTO</h1>
+            <img src="logo_haka.png" alt="HAKA AUTO" class="logo-img">
         </div>
 
         <h2 class="portal-title">Room Booking System</h2>
         <p class="portal-desc">
-            Selamat datang di sistem peminjaman ruang meeting. Silakan pilih akses Anda di bawah ini.
+            Sistem peminjaman ruang meeting terintegrasi. Silakan pilih akses masuk Anda.
         </p>
 
         <a href="/login" class="action-btn btn-login">
-            <i class="fas fa-sign-in-alt"></i> Sign In (Employee)
+            <i class="fas fa-id-card"></i> Sign In (Employee)
         </a>
 
         <a href="/calendar" class="action-btn btn-guest">
-            <i class="fas fa-calendar-alt"></i> View Calendar (Guest)
+            <i class="fas fa-calendar-day"></i> View Calendar (Guest)
         </a>
 
         <div class="copyright">
