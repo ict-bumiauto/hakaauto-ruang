@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     localStorage.setItem('userPhone', result.user.phone || '');
 
                 // Redirect
-                window.location.href = (result.user.role === 'admin') ? '/admin' : '/dashboard';
+                window.location.href = (result.user.role === 'admin') ? '/admin' : '/calendar';
             } else {
                 // === GAGAL (Password Salah) ===
                 alert("Login Gagal: " + result.message);
