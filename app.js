@@ -8,16 +8,22 @@ document.addEventListener('DOMContentLoaded', function() {
     // 1. AUTH & INITIALIZATION
     // ============================================================
     const savedName = localStorage.getItem('currentUser');
+    const currentPath = window.location.pathname;
 
-    // --- PENJAGA PINTU UTAMA ---
-    if (!savedName) {
-        // Jika tidak ada nama (Guest), langsung tendang ke Login
-        // Jangan kasih ampun kalau masuk dashboard
-        window.location.href = '/'; 
-        // Stop script di sini agar form tidak sempat loading
-        return; 
+    // DAFTAR HALAMAN YANG WAJIB LOGIN (PROTECTED)
+    // Jika nama filenya mengandung kata ini, maka wajib login
+    const isProtectedPage = currentPath.includes('dashboard') || 
+                            currentPath.includes('submit') || 
+                            currentPath.includes('index.html'); 
+
+    // LOGIKA PENJAGA PINTU:
+    // Hanya tendang JIKA: (User Belum Login) DAN (Sedang di Halaman Terlarang)
+    if (!savedName && isProtectedPage) {
+        console.warn("⛔ Akses Ditolak: Anda belum login.");
+        window.location.href = '/'; // Tendang ke Login
+        return; // Stop script biar gak jalan lanjut
     }
-    
+
     if (!savedName) {
         if (!window.location.pathname.includes('calendar.html') && !window.location.pathname.endsWith('/calendar')) {
              // window.location.href = '/'; 
