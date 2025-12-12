@@ -10,14 +10,14 @@ const app = express();
 // ============================================================
 
 // Masukkan Key Supabase Anda di sini
-const SUPABASE_URL = 'https://bvvnagfezgzrxfmkcuzz.supabase.co'; 
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ2dm5hZ2Zlemd6cnhmbWtjdXp6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ1NzQ2NzQsImV4cCI6MjA4MDE1MDY3NH0.VhJeH1P2qsiH8mX_IQ7-Yg8kx76f-etiZ9cmusTqAaQ'; 
+const SUPABASE_URL = 'https://bvvnagfezgzrxfmkcuzz.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ2dm5hZ2Zlemd6cnhmbWtjdXp6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ1NzQ2NzQsImV4cCI6MjA4MDE1MDY3NH0.VhJeH1P2qsiH8mX_IQ7-Yg8kx76f-etiZ9cmusTqAaQ';
 
 // Masukkan API Key Resend Anda di sini
-const RESEND_API_KEY = 're_hSLnyXYk_3F79zUuofZkBTUsSsXQqv1fQ'; 
+const RESEND_API_KEY = 're_hSLnyXYk_3F79zUuofZkBTUsSsXQqv1fQ';
 
 // Pengaturan Email
-const ADMIN_EMAIL = 'ict@hakaauto.co.id'; 
+const ADMIN_EMAIL = 'ict@hakaauto.co.id';
 const FROM_EMAIL = 'Haka Auto Booking <booking@ruang.bumiauto.works>'; // Pakai default resend dulu biar aman
 
 // Inisialisasi Library
@@ -33,7 +33,7 @@ app.use(cors({ origin: '*', methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
 
 // PENTING: Mengubah data JSON yang dikirim Frontend agar bisa dibaca Backend
 // Tanpa ini, error "Cannot destructure property of undefined" akan muncul.
-app.use(express.json()); 
+app.use(express.json());
 
 // ============================================================
 // 3. ENDPOINTS / ROUTES
@@ -41,8 +41,8 @@ app.use(express.json());
 
 // --- A. TEST ROUTE (Cek Server Hidup/Mati) ---
 app.get('/api/test', (req, res) => {
-    res.json({ 
-        status: "Online", 
+    res.json({
+        status: "Online",
         message: "Backend Haka Auto berjalan normal!",
         timestamp: new Date().toISOString()
     });
@@ -80,7 +80,7 @@ app.post('/api/login', async (req, res) => {
                 email: data.email,
                 role: data.role,
                 division: data.division,
-                phone: data.phone 
+                phone: data.phone
             }
         });
 
@@ -103,7 +103,7 @@ app.get('/api/bookings', async (req, res) => {
             .from('bookings')
             .select('*')
             .order('created_at', { ascending: false }); // Urutkan dari yang terbaru
-        
+
         if (error) throw error;
         res.json(data);
     } catch (err) {
@@ -127,15 +127,20 @@ app.post('/api/bookings', async (req, res) => {
             .eq('roomName', data.roomName)
             .neq('status', 'Rejected')
             .neq('status', 'Cancelled');
-        
+
         // Helper konversi jam "08:30" ke menit integer
-        const toMin = (s) => { const [h,m]=s.split(':').map(Number); return h*60+m; };
-        
+        const toMin = (s) => { const [h, m] = s.split(':').map(Number); return h * 60 + m; };
+
         const newStart = toMin(data.startTime);
         const newEnd = toMin(data.endTime);
 
         // Cek irisan waktu
+        // Cek irisan waktu
         const isBentrok = conflicts?.some(ex => {
+            // FIX: Hanya anggap bentrok jika booking eksisting sudah APPROVED. 
+            // Kalau masih Pending, boleh ditumpuk.
+            if (ex.status !== 'Approved') return false;
+
             const exStart = toMin(ex.startTime);
             const exEnd = toMin(ex.endTime);
             // Rumus tabrakan jadwal
@@ -159,7 +164,7 @@ app.post('/api/bookings', async (req, res) => {
         try {
             await resend.emails.send({
                 from: FROM_EMAIL,
-                to: [ADMIN_EMAIL], 
+                to: [ADMIN_EMAIL],
                 subject: `New Booking: ${data.roomName}`,
                 // Ganti HTML jadi TEXT biasa agar tidak dianggap Spam
                 // Dan pastikan tidak ada http/https link di dalamnya
@@ -203,19 +208,19 @@ app.put('/api/bookings/:ticketNumber', async (req, res) => {
             .select(); // Penting: .select() mengembalikan data terbaru (termasuk email user)
 
         if (error) throw error;
-        
+
         const updatedBooking = data[0]; // Data booking yang baru diupdate
         console.log(`Booking ${ticketNumber} updated to ${status}`);
 
         // 2. KIRIM EMAIL NOTIFIKASI KE STAFF (USER)
         // Cek apakah ada email peminjamnya?
         if (updatedBooking.borrowerEmail) {
-            
+
             // Tentukan Warna & Pesan berdasarkan Status
             let subjectStatus = status === 'Approved' ? '✅ Approved' : '❌ Rejected';
             let color = status === 'Approved' ? '#10B981' : '#EF4444';
-            let message = status === 'Approved' 
-                ? 'Permintaan peminjaman ruang Anda telah <b>DISETUJUI</b>.' 
+            let message = status === 'Approved'
+                ? 'Permintaan peminjaman ruang Anda telah <b>DISETUJUI</b>.'
                 : 'Mohon maaf, permintaan Anda <b>DITOLAK</b>.';
 
             try {
