@@ -1,8 +1,8 @@
 // GANTI DENGAN LINK API VERCEL ANDA
-const API_URL = '/api/bookings'; 
+const API_URL = '/api/bookings';
 
-document.addEventListener('DOMContentLoaded', function() {
-    
+document.addEventListener('DOMContentLoaded', function () {
+
     // ============================================================
     // 1. CEK STATUS USER (GUEST vs MEMBER)
     // ============================================================
@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // LOGIKA TOMBOL
     if (newBookingBtn) {
-        newBookingBtn.addEventListener('click', function(e) {
+        newBookingBtn.addEventListener('click', function (e) {
             e.preventDefault(); // Matikan link bawaan
 
             if (!savedName) {
@@ -29,8 +29,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (savedName) {
         // --- JIKA SUDAH LOGIN ---
-        if(headerName) headerName.innerText = savedName;
-        
+        if (headerName) headerName.innerText = savedName;
+
         // Tombol Sign Out berfungsi normal
         if (signOutBtn) {
             signOutBtn.innerText = "Sign Out";
@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
         // --- JIKA TAMU (GUEST) ---
         // Jangan di-kick, biarkan lihat kalender
-        if(headerName) {
+        if (headerName) {
             headerName.innerText = "Guest (View Only)";
             headerName.style.color = "#aaa"; // Warna abu biar beda
         }
@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', function() {
             signOutBtn.style.color = "white";
             signOutBtn.onclick = (e) => {
                 // UPDATE BARIS INI: Arahkan ke /login
-                e.preventDefault(); window.location.href = '/login'; 
+                e.preventDefault(); window.location.href = '/login';
             };
         }
 
@@ -83,8 +83,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const btnRight = document.getElementById('scrollRight');
 
     if (roomContainer && btnLeft && btnRight) {
-        btnRight.onclick = () => { roomContainer.scrollBy({ left: 320, behavior: 'smooth' }); };
-        btnLeft.onclick = () => { roomContainer.scrollBy({ left: -320, behavior: 'smooth' }); };
+        btnRight.onclick = () => { roomContainer.scrollBy({ left: 335, behavior: 'smooth' }); };
+        btnLeft.onclick = () => { roomContainer.scrollBy({ left: -335, behavior: 'smooth' }); };
     }
 
     // ============================================================
@@ -94,8 +94,8 @@ document.addEventListener('DOMContentLoaded', function() {
         let allBookings = [];
         try {
             const res = await fetch(API_URL);
-            if(res.ok) allBookings = await res.json();
-        } catch(e) { console.error("Gagal load data"); }
+            if (res.ok) allBookings = await res.json();
+        } catch (e) { console.error("Gagal load data"); }
 
         updateDashboardStats(allBookings);
         updateRoomStatus(allBookings);
@@ -111,21 +111,21 @@ document.addEventListener('DOMContentLoaded', function() {
     const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
     function renderCalendar(allBookings) {
-        let firstDayofMonth = new Date(currYear, currMonth, 1).getDay(); 
-        let lastDateofMonth = new Date(currYear, currMonth + 1, 0).getDate(); 
-        let lastDateofLastMonth = new Date(currYear, currMonth, 0).getDate(); 
+        let firstDayofMonth = new Date(currYear, currMonth, 1).getDay();
+        let lastDateofMonth = new Date(currYear, currMonth + 1, 0).getDate();
+        let lastDateofLastMonth = new Date(currYear, currMonth, 0).getDate();
         let lastDayofMonth = new Date(currYear, currMonth, lastDateofMonth).getDay();
         let liTag = "";
 
         for (let i = firstDayofMonth; i > 0; i--) liTag += `<li class="inactive">${lastDateofLastMonth - i + 1}</li>`;
 
-        for (let i = 1; i <= lastDateofMonth; i++) { 
+        for (let i = 1; i <= lastDateofMonth; i++) {
             let isToday = i === new Date().getDate() && currMonth === new Date().getMonth() && currYear === new Date().getFullYear();
-            let activeClass = isToday ? "active" : ""; 
-            
+            let activeClass = isToday ? "active" : "";
+
             let currentFullDate = `${currYear}-${String(currMonth + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
             let events = allBookings.filter(b => b.bookingDate === currentFullDate && b.status === 'Approved');
-            
+
             let eventHTML = '';
             events.forEach(evt => {
                 let shortName = evt.borrowerName.split(' ')[0];
@@ -157,11 +157,11 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll(".nav-btn").forEach(icon => {
         icon.addEventListener("click", () => {
             currMonth = icon.id === "prevMonth" ? currMonth - 1 : currMonth + 1;
-            if(currMonth < 0 || currMonth > 11) {
+            if (currMonth < 0 || currMonth > 11) {
                 date = new Date(currYear, currMonth, new Date().getDate());
                 currYear = date.getFullYear(); currMonth = date.getMonth();
             } else { date = new Date(); }
-            renderPage(); 
+            renderPage();
         });
     });
 
@@ -196,7 +196,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateRoomStatus(allBookings) {
         const todayStr = new Date().toLocaleDateString('en-CA');
         const bookedRooms = allBookings.filter(b => b.bookingDate === todayStr && b.status === 'Approved').map(b => b.roomName.trim());
-        
+
         document.querySelectorAll('.room-card-item').forEach(card => {
             const titleEl = card.querySelector('h4');
             const badgeEl = card.querySelector('span.badge');
