@@ -1,7 +1,7 @@
 // admin.js
 const API_URL = '/api/bookings';
-document.addEventListener('DOMContentLoaded', function() {
-    
+document.addEventListener('DOMContentLoaded', function () {
+
     // Elemen Statistik
     const statTotal = document.getElementById('statTotal');
     const statPending = document.getElementById('statPending');
@@ -15,18 +15,18 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             const response = await fetch(API_URL); // GET
             const allBookings = await response.json();
-            
+
             // Hitung Statistik
             let counts = { total: allBookings.length, pending: 0, approved: 0, rejected: 0 };
             let pendingList = [];
 
             allBookings.forEach(data => {
-                if(data.status === 'Pending') {
+                if (data.status === 'Pending') {
                     counts.pending++;
                     pendingList.push(data);
                 }
-                if(data.status === 'Approved') counts.approved++;
-                if(data.status === 'Rejected' || data.status === 'Cancelled') counts.rejected++;
+                if (data.status === 'Approved') counts.approved++;
+                if (data.status === 'Rejected' || data.status === 'Cancelled') counts.rejected++;
             });
 
             // Update Angka UI
@@ -61,7 +61,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="req-header">
                     <div>
                         <span class="req-id">${data.ticketNumber}</span>
-                        <span class="req-user">${data.borrowerName} • ${data.department}</span>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <span class="req-user">${data.borrowerName} • ${data.department}</span>
+                            ${data.whatsapp ? (() => {
+                let num = data.whatsapp.replace(/\D/g, '');
+                if (num.startsWith('0')) num = '62' + num.slice(1);
+                return `<a href="https://wa.me/${num}" target="_blank" title="Chat WhatsApp" style="text-decoration:none; font-size:16px;">💬</a>`;
+            })() : ''}
+                        </div>
                     </div>
                     <span class="badge badge-black" style="background:#F59E0B; color:white;">Pending</span>
                 </div>
@@ -93,7 +100,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- FUNGSI HANDLE ACTION (Global) ---
     window.handleAction = async (ticketID, newStatus) => {
-        if(!confirm(`Are you sure you want to ${newStatus} this request?`)) return;
+        if (!confirm(`Are you sure you want to ${newStatus} this request?`)) return;
 
         try {
             // PERBAIKAN DISINI: Tambahkan encodeURIComponent(ticketID)

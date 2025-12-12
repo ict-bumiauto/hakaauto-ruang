@@ -1,48 +1,48 @@
 // GANTI DENGAN LINK API VERCEL ANDA
-const API_URL = '/api/bookings'; 
+const API_URL = '/api/bookings';
 
 // ==========================================
 // SATPAM HALAMAN (Taruh Paling Atas app.js)
 // ==========================================
-(function() {
+(function () {
     const user = localStorage.getItem('currentUser');
-    const isDashboardPage = document.getElementById('bookingForm'); 
+    const isDashboardPage = document.getElementById('bookingForm');
 
     if (isDashboardPage && !user) {
         console.warn("⛔ Intruder detected! Redirecting to login...");
         alert("Anda harus login untuk mengakses halaman ini!");
-        window.location.href = '/login'; 
-        throw new Error("Access Denied"); 
+        window.location.href = '/login';
+        throw new Error("Access Denied");
     }
 })();
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     console.log("🚀 App.js Dimulai...");
 
     // ============================================================
     // 1. AUTH & INITIALIZATION
     // ============================================================
     const savedName = localStorage.getItem('currentUser');
-    
+
     // Header & Form Names
     const headerName = document.getElementById('headerUserName');
-    if(headerName) headerName.innerText = savedName || 'Guest';
+    if (headerName) headerName.innerText = savedName || 'Guest';
 
     const formName = document.getElementById('formBorrowerName');
-    if(formName) formName.value = savedName || '';
+    if (formName) formName.value = savedName || '';
 
     // Auto-fill Divisi
     const savedDivision = localStorage.getItem('userDivision');
-    const sbuSelect = document.querySelector('select[name="sbu"]'); 
+    const sbuSelect = document.querySelector('select[name="sbu"]');
     if (sbuSelect && savedDivision) {
-        sbuSelect.value = savedDivision; 
+        sbuSelect.value = savedDivision;
     }
 
     // Auto-fill WhatsApp
     const savedPhone = localStorage.getItem('userPhone');
-    const waInput = document.getElementById('whatsapp') || 
-                    document.querySelector('input[name="whatsappNumber"]') || 
-                    document.querySelector('input[name="whatsapp"]');
+    const waInput = document.getElementById('whatsapp') ||
+        document.querySelector('input[name="whatsappNumber"]') ||
+        document.querySelector('input[name="whatsapp"]');
 
     if (waInput && savedPhone) {
         waInput.value = savedPhone;
@@ -69,13 +69,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // ============================================================
     // 2. FORM HELPERS (JAM & ADD-ONS)
     // ============================================================
-    
+
     // Auto-fill Date
     const urlParams = new URLSearchParams(window.location.search);
     const dateParam = urlParams.get('date');
     if (dateParam) {
         const dateInput = document.querySelector('input[name="date"]');
-        if(dateInput) { dateInput.value = dateParam; dateInput.classList.add('input-highlight'); }
+        if (dateInput) { dateInput.value = dateParam; dateInput.classList.add('input-highlight'); }
     }
 
     // --- TIME PICKER LOGIC (DIPERBAIKI SELECTORNYA) ---
@@ -90,26 +90,26 @@ document.addEventListener('DOMContentLoaded', function() {
         for (let h = startHour; h <= endHour; h++) {
             for (let m = 0; m < 60; m += 30) {
                 if (h === endHour && m > 0) break;
-                const val = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+                const val = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
                 const opt = document.createElement('option');
                 opt.value = val; opt.text = val;
                 el.appendChild(opt);
             }
         }
     }
-    
+
     if (startSelect && endSelect) {
-        populateTimeSelect(startSelect); 
+        populateTimeSelect(startSelect);
         populateTimeSelect(endSelect);
-        
-        startSelect.addEventListener('change', function() {
-            if(!this.value) return;
+
+        startSelect.addEventListener('change', function () {
+            if (!this.value) return;
             let [h, m] = this.value.split(':').map(Number);
             h += 1;
-            const next = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+            const next = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
             // Cari apakah opsi next ada di endSelect
             const exist = [...endSelect.options].some(o => o.value === next);
-            if(exist) endSelect.value = next;
+            if (exist) endSelect.value = next;
         });
     }
 
@@ -128,21 +128,21 @@ document.addEventListener('DOMContentLoaded', function() {
             <button type="button" class="btn-remove-row">✕</button>`;
         return row;
     }
-    
+
     if (addonsToggle) {
-        addonsToggle.addEventListener('change', function() {
-            if(addonsContainer) {
+        addonsToggle.addEventListener('change', function () {
+            if (addonsContainer) {
                 addonsContainer.style.display = this.checked ? 'block' : 'none';
-                if(this.checked && addonsList && addonsList.children.length === 0) addonsList.appendChild(createAddonRow());
-                if(!this.checked && addonsList) addonsList.innerHTML = '';
+                if (this.checked && addonsList && addonsList.children.length === 0) addonsList.appendChild(createAddonRow());
+                if (!this.checked && addonsList) addonsList.innerHTML = '';
             }
         });
     }
-    if (btnAddRow) btnAddRow.addEventListener('click', () => { 
-        if(addonsList && addonsList.children.length < 2) addonsList.appendChild(createAddonRow()); 
+    if (btnAddRow) btnAddRow.addEventListener('click', () => {
+        if (addonsList && addonsList.children.length < 2) addonsList.appendChild(createAddonRow());
     });
-    if (addonsList) addonsList.addEventListener('click', (e) => { 
-        if(e.target.classList.contains('btn-remove-row')) e.target.closest('.addon-row').remove(); 
+    if (addonsList) addonsList.addEventListener('click', (e) => {
+        if (e.target.classList.contains('btn-remove-row')) e.target.closest('.addon-row').remove();
     });
 
 
@@ -154,7 +154,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const capacityMsg = document.getElementById('capacityMsg');
 
     function checkCapacityVisual() {
-        if(!roomSelectEl || !participantsInput) return false;
+        if (!roomSelectEl || !participantsInput) return false;
 
         const sel = roomSelectEl.options[roomSelectEl.selectedIndex];
         const max = parseInt(sel.getAttribute('data-capacity')) || 0;
@@ -162,14 +162,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (max > 0 && current > 0 && current > max) {
             participantsInput.classList.add('input-error');
-            if(capacityMsg) {
+            if (capacityMsg) {
                 capacityMsg.style.display = 'block';
                 capacityMsg.innerText = `⚠️ Melebihi standar (${max} orang), namun tetap bisa diajukan.`;
             }
-            return true; 
+            return true;
         } else {
             participantsInput.classList.remove('input-error');
-            if(capacityMsg) capacityMsg.style.display = 'none';
+            if (capacityMsg) capacityMsg.style.display = 'none';
             return false;
         }
     }
@@ -191,7 +191,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const now = new Date();
             const todayStr = new Date().toLocaleDateString('en-CA');
-            
+
             const bookedRooms = allBookings
                 .filter(b => b.bookingDate === todayStr && b.status === 'Approved')
                 .map(b => b.roomName.trim());
@@ -222,7 +222,7 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error("Gagal update status:", error);
         }
     }
-    updateRoomStatus(); 
+    updateRoomStatus();
 
     function updateDashboardStats(allBookings) {
         const statsList = document.querySelector('.quick-stats .stats-list');
@@ -230,9 +230,9 @@ document.addEventListener('DOMContentLoaded', function() {
             const total = allBookings.length;
             const approved = allBookings.filter(b => b.status === 'Approved').length;
             const pending = allBookings.filter(b => b.status === 'Pending').length;
-            
+
             // Asumsi struktur HTML ada 3 anak (Total, Approved, Pending)
-            if(statsList.children.length >= 3) {
+            if (statsList.children.length >= 3) {
                 statsList.children[0].querySelector('.stat-value').innerText = total;
                 statsList.children[1].querySelector('.stat-value').innerText = approved;
                 statsList.children[2].querySelector('.stat-value').innerText = pending;
@@ -243,10 +243,10 @@ document.addEventListener('DOMContentLoaded', function() {
         if (recentContainer) {
             // Ambil wadah list (bisa .recent-list atau langsung container)
             let listDiv = recentContainer.querySelector('.recent-list') || recentContainer;
-            
+
             const recentData = allBookings.slice(0, 5);
             let htmlContent = '<h3>Recent Bookings</h3>';
-            
+
             if (recentData.length === 0) {
                 htmlContent += '<p style="color:#999; font-size:13px;">No bookings yet.</p>';
             } else {
@@ -274,22 +274,22 @@ document.addEventListener('DOMContentLoaded', function() {
     // ============================================================
     window.showErrorModal = (title, message) => {
         const m = document.getElementById('statusModal');
-        if(m) {
+        if (m) {
             document.getElementById('modalTitle').innerText = title;
             document.getElementById('modalMessage').innerHTML = message;
             m.style.display = 'flex';
         } else { alert(title + "\n" + message); }
     };
-    
-    window.closeStatusModal = () => { const m = document.getElementById('statusModal'); if(m) m.style.display = 'none'; };
+
+    window.closeStatusModal = () => { const m = document.getElementById('statusModal'); if (m) m.style.display = 'none'; };
     const capModal = document.getElementById('capacityModal');
-    window.closeCapacityModal = () => { if(capModal) capModal.style.display = 'none'; };
-    
+    window.closeCapacityModal = () => { if (capModal) capModal.style.display = 'none'; };
+
     const btnProceed = document.getElementById('btnProceedCapacity');
-    if(btnProceed) {
+    if (btnProceed) {
         btnProceed.onclick = () => {
             closeCapacityModal();
-            processBooking(); 
+            processBooking();
         };
     }
 
@@ -297,10 +297,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // 6. LOGIKA SUBMIT (DENGAN FIX EMAIL)
     // ============================================================
     const form = document.getElementById('bookingForm');
-    const submitBtn = document.querySelector('.submit-btn'); 
+    const submitBtn = document.querySelector('.submit-btn');
 
     if (form) {
-        form.addEventListener('submit', function(event) {
+        form.addEventListener('submit', function (event) {
             event.preventDefault();
 
             // Cek Integrity
@@ -317,7 +317,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const cur = parseInt(participantsInput.value);
                 document.getElementById('capModalMessage').innerHTML = `Ruangan ini maksimal <b>${max} orang</b>, tapi Anda memasukkan <b>${cur} orang</b>.<br>Yakin ingin tetap melanjutkan?`;
                 capModal.style.display = 'flex';
-                return; 
+                return;
             }
 
             processBooking();
@@ -338,12 +338,12 @@ document.addEventListener('DOMContentLoaded', function() {
             const data = Object.fromEntries(formData.entries());
             const roomSelect = document.getElementById('roomSelect');
             const selectedRoomText = roomSelect.options[roomSelect.selectedIndex].text;
-            const toMinutes = (s) => { const [h,m]=s.split(':').map(Number); return h*60+m; };
+            const toMinutes = (s) => { const [h, m] = s.split(':').map(Number); return h * 60 + m; };
 
             // Cek Bentrok
             const response = await fetch(API_URL);
             if (!response.ok) throw new Error("Gagal terhubung ke server");
-            
+
             const allBookings = await response.json();
             const newStart = toMinutes(data.startTime);
             const newEnd = toMinutes(data.endTime);
@@ -365,7 +365,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (confirm(`⚠️ PRIORITY OVERRIDE!\n\nRuangan dipakai: ${conflictingBooking.borrowerName}\nTimpa jadwal mereka?`)) {
                         await fetch(`${API_URL}/${encodeURIComponent(conflictingBooking.ticketNumber)}`, {
                             method: 'PUT',
-                            headers: {'Content-Type':'application/json'},
+                            headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ status: 'Cancelled', notes: 'Override by Admin' })
                         });
                     } else {
@@ -378,12 +378,12 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             // SIMPAN DATA
-            const ticketID = `#BA-${new Date().toISOString().slice(0,10).replace(/-/g,"")}-${Math.floor(1000+Math.random()*9000)}`;
-            
+            const ticketID = `#BA-${new Date().toISOString().slice(0, 10).replace(/-/g, "")}-${Math.floor(1000 + Math.random() * 9000)}`;
+
             let addonsData = [];
             document.querySelectorAll('select[name="addonType[]"]').forEach((sel, i) => {
                 const det = document.querySelectorAll('input[name="addonDetail[]"]')[i].value;
-                if(det.trim()) addonsData.push({ type: sel.value, detail: det });
+                if (det.trim()) addonsData.push({ type: sel.value, detail: det });
             });
 
             const initialStatus = (localStorage.getItem('userRole') === 'admin') ? 'Approved' : 'Pending';
@@ -391,12 +391,13 @@ document.addEventListener('DOMContentLoaded', function() {
             const newBooking = {
                 ticketNumber: ticketID,
                 borrowerName: data.borrowerName,
-                
+
                 // === [PERBAIKAN: TAMBAH EMAIL DI SINI] ===
                 borrowerEmail: localStorage.getItem('userEmail'),
                 // ==========================================
 
                 department: data.sbu,
+                whatsapp: data.whatsapp,
                 purpose: data.purpose,
                 roomName: selectedRoomText,
                 bookingDate: data.date,
@@ -409,7 +410,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const saveRes = await fetch(API_URL, {
                 method: 'POST',
-                headers: {'Content-Type':'application/json'},
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(newBooking)
             });
 
