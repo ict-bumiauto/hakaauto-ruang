@@ -13,10 +13,12 @@ document.addEventListener('DOMContentLoaded', function () {
     // --- FUNGSI UTAMA: AMBIL DATA DARI SERVER ---
     async function fetchAndRender() {
         try {
-            if (res.ok) {
-                const data = await res.json();
-                window.allBookings = data; // Simpan global untuk conflict check
-                allBookings = data;
+            const response = await fetch(API_URL); // GET
+            let allBookings = [];
+
+            if (response.ok) {
+                allBookings = await response.json();
+                window.allBookings = allBookings; // Simpan global untuk conflict check
             }
             // ... (rest of render logic remains implicitly handled by original function structure, we only target specific lines if possible, but handleAction is global so we might need a bigger chunk or careful replacing)
 
