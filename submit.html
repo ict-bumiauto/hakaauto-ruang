@@ -151,18 +151,20 @@
         </div>
 
         <aside class="sidebar">
-            <div class="card stats-card">
+            <div class="card quick-stats">
                 <h3>Quick Stats</h3>
                 <ul class="stats-list">
-                    <li><span>Total Bookings</span><span class="stat-value">1</span></li>
-                    <li><span>Approved</span><span class="stat-value text-green">0</span></li>
-                    <li><span>Pending</span><span class="stat-value text-orange">1</span></li>
+                    <li><span>Total Bookings</span><span class="stat-value">Loading...</span></li>
+                    <li><span>Approved</span><span class="stat-value text-green">Loading...</span></li>
+                    <li><span>Pending</span><span class="stat-value text-orange">Loading...</span></li>
                 </ul>
             </div>
 
-            <div class="card recent-card">
+            <div class="card recent-bookings">
                 <h3>Recent Bookings</h3>
-                <p style="font-size: 12px; color: var(--text-muted);">Meeting Room A (Pending)</p>
+                <div class="recent-list">
+                    <p style="font-size: 13px; color: var(--text-muted);">Loading data...</p>
+                </div>
             </div>
         </aside>
 
@@ -213,6 +215,7 @@
             document.getElementById('displayTime').innerText = fullTime;
         });
     </script>
+    <script src="app.js"></script>
     <script src="theme.js"></script>
 </body>
 
