@@ -122,7 +122,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (conflict) {
                     const modal = document.getElementById('conflictModal');
                     const pText = modal.querySelector('p');
-                    if (pText) pText.innerHTML = `Ruangan ini sudah dibooking untuk <b>${conflict.purpose}</b> oleh <b>${conflict.borrowerName}</b><br>pada jam ${conflict.startTime} - ${conflict.endTime}.`;
+                    if (pText) pText.innerHTML = `Ruangan ini sudah dibooking untuk <b>${conflict.purpose}</b> oleh <b>${conflict.borrowerName} - ${conflict.department}</b>pada jam ${conflict.startTime} - ${conflict.endTime}.`;
                     modal.style.display = 'flex';
                     return; // Stop proses
                 }
