@@ -13,8 +13,12 @@ document.addEventListener('DOMContentLoaded', function () {
     // --- FUNGSI UTAMA: AMBIL DATA DARI SERVER ---
     async function fetchAndRender() {
         try {
-            const response = await fetch(API_URL); // GET
-            const allBookings = await response.json();
+            if (res.ok) {
+                const data = await res.json();
+                window.allBookings = data; // Simpan global untuk conflict check
+                allBookings = data;
+            }
+            // ... (rest of render logic remains implicitly handled by original function structure, we only target specific lines if possible, but handleAction is global so we might need a bigger chunk or careful replacing)
 
             // Hitung Statistik
             let counts = { total: allBookings.length, pending: 0, approved: 0, rejected: 0 };
