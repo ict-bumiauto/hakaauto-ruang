@@ -441,6 +441,28 @@ body {
     width: 100%;
     max-width: 400px;
     padding: 20px;
+    position: relative;
+    /* Untuk positioning relative jika perlu */
+}
+
+/* --- TOMBOL BACK (LOGIN) --- */
+.login-back-wrapper {
+    margin-bottom: 15px;
+}
+
+.login-back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 14px;
+    transition: color 0.2s;
+}
+
+.login-back-link:hover {
+    color: var(--primary-blue);
 }
 
 .login-card {

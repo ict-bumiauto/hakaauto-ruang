@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,11 +8,19 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body class="login-page">
 
     <button id="themeToggle" class="theme-btn-floating">🌙</button>
 
     <div class="login-container">
+        <!-- Tombol Back -->
+        <div class="login-back-wrapper">
+            <a href="/" class="login-back-link">
+                <i class="fas fa-arrow-left"></i> Back
+            </a>
+        </div>
+
         <div class="login-card">
             <div class="login-header">
                 <img src="logo_haka.png" alt="BUMI AUTO Logo" class="login-logo">
@@ -29,15 +38,15 @@
                     <label for="password">Password</label>
                     <div class="input-wrapper">
                         <i class="fas fa-lock input-icon"></i>
-                        
+
                         <input type="password" id="password" placeholder="Enter password" required>
-                        
+
                     </div>
                 </div>
 
                 <div class="login-options">
                     <label class="checkbox-container">
-                        <input type="checkbox"> 
+                        <input type="checkbox">
                         <span class="text-sm">Remember me</span>
                     </label>
                     <a href="forgot-password.html" class="forgot-password">Forgot Password?</a>
@@ -55,4 +64,5 @@
     <script src="login.js"></script>
     <script src="theme.js"></script>
 </body>
+
 </html>
