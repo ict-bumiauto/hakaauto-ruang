@@ -349,7 +349,8 @@ document.addEventListener('DOMContentLoaded', function () {
             const newEnd = toMinutes(data.endTime);
 
             const conflictingBooking = allBookings.find(b => {
-                if (b.status === 'Rejected' || b.status === 'Cancelled') return false;
+                // FIXED: Hanya anggap bentrok jika status SUDAH Approved. Pending masih boleh ditumpuk (nanti admin yg pilih).
+                if (b.status !== 'Approved') return false;
                 if (b.roomName === selectedRoomText && b.bookingDate === data.date) {
                     const exStart = toMinutes(b.startTime); const exEnd = toMinutes(b.endTime);
                     return (newStart < exEnd && newEnd > exStart);
