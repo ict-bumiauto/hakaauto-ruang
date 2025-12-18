@@ -163,7 +163,7 @@ window.resetUserPassword = function (id, name) {
 
     window.showConfirmation(
         'Reset Password?',
-        `Are you sure you want to reset password for <b>${name}</b>? New password will be <b>123456</b>.`,
+        `Are you sure you want to reset password for <b>${name}</b>? New password will be <b>kerjaibadah</b>.`,
         async () => {
             try {
                 const response = await fetch(`/api/users/${id}/reset-password`, { method: 'PUT' });

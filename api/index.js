@@ -293,7 +293,7 @@ app.get('/api/users', async (req, res) => {
 // 2. ADD USER
 app.post('/api/users', async (req, res) => {
     const { name, email, phone, division, role } = req.body;
-    const defaultPassword = '123456'; // Default password
+    const defaultPassword = 'kerjaibadah'; // Default password
 
     try {
         const { data, error } = await supabase
@@ -336,7 +336,7 @@ app.delete('/api/users/:id', async (req, res) => {
 // 4. RESET PASSWORD
 app.put('/api/users/:id/reset-password', async (req, res) => {
     const { id } = req.params;
-    const defaultPass = '123456';
+    const defaultPass = 'kerjaibadah';
     try {
         const { data, error } = await supabase
             .from('users')
@@ -345,7 +345,7 @@ app.put('/api/users/:id/reset-password', async (req, res) => {
             .select();
 
         if (error) throw error;
-        res.json({ message: "Password reset to '123456'" });
+        res.json({ message: "Password reset to 'kerjaibadah'" });
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
