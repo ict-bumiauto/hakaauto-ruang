@@ -125,6 +125,17 @@ document.addEventListener('DOMContentLoaded', function () {
     let currMonth = date.getMonth();
     const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
+    // List Hari Libur Nasional 2025 (Official)
+    const holidays2025 = [
+        "2025-01-01", "2025-01-27", "2025-01-28", "2025-01-29",
+        "2025-03-28", "2025-03-29", "2025-03-31", "2025-04-01",
+        "2025-04-02", "2025-04-03", "2025-04-04", "2025-04-07",
+        "2025-04-18", "2025-04-20", "2025-05-01", "2025-05-12",
+        "2025-05-13", "2025-05-29", "2025-05-30", "2025-06-01",
+        "2025-06-06", "2025-06-09", "2025-06-27", "2025-08-17",
+        "2025-09-05", "2025-12-25", "2025-12-26"
+    ];
+
     function renderCalendar(allBookings) {
         let firstDayofMonth = new Date(currYear, currMonth, 1).getDay();
         let lastDateofMonth = new Date(currYear, currMonth + 1, 0).getDate();
@@ -141,13 +152,25 @@ document.addEventListener('DOMContentLoaded', function () {
         for (let i = 1; i <= lastDateofMonth; i++) {
             let isToday = i === new Date().getDate() && currMonth === new Date().getMonth() && currYear === new Date().getFullYear();
 
-            // Check if Past Date
+            // 1. Check if Past Date
             let checkDate = new Date(currYear, currMonth, i);
             let isPast = checkDate < todayDate;
 
-            let activeClass = isToday ? "active" : "";
+            // 2. Check if Holiday or Weekend
+            // Weekend: Sunday (0) or Saturday (6)
+            let dayOfWeek = checkDate.getDay();
+            let isWeekend = (dayOfWeek === 0 || dayOfWeek === 6);
 
+            // Retrieve Current Date String safely
             let currentFullDate = `${currYear}-${String(currMonth + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+
+            let isNationalHoliday = holidays2025.includes(currentFullDate);
+            let isRedDate = isWeekend || isNationalHoliday;
+
+            let activeClass = isToday ? "active" : "";
+            // Append 'holiday' class if it is a red date
+            if (isRedDate) activeClass += " holiday";
+
             let events = allBookings.filter(b => b.bookingDate === currentFullDate && b.status === 'Approved');
 
             let eventHTML = '';
@@ -158,9 +181,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
             if (isPast) {
                 // TANGGAL LEWAT -> DISABLE (Class inactive, Hapus OnClick)
-                liTag += `<li class="inactive"><span class="date-num">${i}</span>${eventHTML}</li>`;
+                // Tetap tambahkan class holiday agar tahu itu hari libur meski disable
+                liTag += `<li class="inactive ${isRedDate ? 'holiday' : ''}"><span class="date-num">${i}</span>${eventHTML}</li>`;
             } else {
-                // HARI INI & MASA DEPAN -> BISA DIKLIK
+                // HARI INI & MASA DEPAN -> BISA DIKLIK (MERAH JIKA HOLIDAY)
                 liTag += `<li class="${activeClass}" onclick="selectDate(${currYear}, ${currMonth}, ${i})">
                         <span class="date-num">${i}</span>${eventHTML}</li>`;
             }
