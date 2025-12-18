@@ -315,17 +315,49 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // --- Room Status ---
     function updateRoomStatus(allBookings) {
-        const todayStr = new Date().toLocaleDateString('en-CA');
-        const bookedRooms = allBookings.filter(b => b.bookingDate === todayStr && b.status === 'Approved').map(b => b.roomName.trim());
+        // Get Today's Date in YYYY-MM-DD format manually to match bookingDate format
+        const now = new Date();
+        const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
 
         document.querySelectorAll('.room-card-item').forEach(card => {
             const titleEl = card.querySelector('h4');
+            const descEl = card.querySelector('p');
             const badgeEl = card.querySelector('span.badge');
+
             if (titleEl && badgeEl) {
-                if (bookedRooms.includes(titleEl.innerText.trim())) {
-                    badgeEl.innerText = 'Booked'; badgeEl.className = 'badge badge-red';
+                const roomName = titleEl.innerText.trim();
+
+                // Find approved bookings for this room today
+                const bookings = allBookings.filter(b =>
+                    b.bookingDate === todayStr &&
+                    b.status === 'Approved' &&
+                    b.roomName.trim() === roomName
+                );
+
+                if (bookings.length > 0) {
+                    // ROOM BOOKED
+                    badgeEl.innerText = 'Booked';
+                    badgeEl.className = 'badge badge-red';
+
+                    // Display Times (Sorted)
+                    bookings.sort((a, b) => a.startTime.localeCompare(b.startTime));
+                    const timeList = bookings.map(b => `${b.startTime}-${b.endTime}`).join(', ');
+
+                    if (descEl) {
+                        descEl.innerText = timeList;
+                        descEl.style.color = "#DC2626"; // Red text to highlight
+                        descEl.style.fontWeight = "600";
+                    }
                 } else {
-                    badgeEl.innerText = 'Available'; badgeEl.className = 'badge badge-black';
+                    // ROOM AVAILABLE
+                    badgeEl.innerText = 'Available';
+                    badgeEl.className = 'badge badge-black';
+
+                    if (descEl) {
+                        descEl.innerText = 'No bookings for today';
+                        descEl.style.color = ""; // Reset to default
+                        descEl.style.fontWeight = "";
+                    }
                 }
             }
         });
