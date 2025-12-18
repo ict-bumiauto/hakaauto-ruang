@@ -441,28 +441,6 @@ body {
     width: 100%;
     max-width: 400px;
     padding: 20px;
-    position: relative;
-    /* Untuk positioning relative jika perlu */
-}
-
-/* --- TOMBOL BACK (LOGIN) --- */
-.login-back-wrapper {
-    margin-bottom: 15px;
-}
-
-.login-back-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    text-decoration: none;
-    color: var(--text-muted);
-    font-weight: 600;
-    font-size: 14px;
-    transition: color 0.2s;
-}
-
-.login-back-link:hover {
-    color: var(--primary-blue);
 }
 
 .login-card {
@@ -673,118 +651,66 @@ body {
     font-weight: 700;
 }
 
-/* =========================================
-   FIX FINAL CAROUSEL: UKURAN PIXEL TETAP & STABIL
-========================================= */
-
-/* 0. RESET PENTING */
-.availability-section,
-.room-list-wrapper,
-.room-list,
-.room-card-item {
-    box-sizing: border-box !important;
+/* -- ROOM AVAILABILITY SECTION -- */
+.availability-section h3 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 15px;
 }
 
-/* 1. Container Utama (Mengunci Agar Tidak Melebar) */
-.availability-section {
-    width: 100%;
-    /* 3 Card (320x3) + 2 Gap (15x2) = 990px + Padding */
-    max-width: 1050px;
-    margin: 0 auto;
-    /* Center carousel */
-    overflow: hidden;
-    padding: 20px 0;
-}
-
-/* 2. Area Scroll (.room-list) */
 .room-list {
-    display: flex;
-    flex-wrap: nowrap;
-    /* Kunci agar tidak turun baris */
-    overflow-x: hidden;
-    /* Hide scrollbar default, use buttons */
-    scroll-behavior: smooth;
-    width: 100%;
-
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    /* 3 Kolom kartu */
     gap: 15px;
-    /* Jarak antar kartu */
-    padding: 5px 5px 15px 5px;
-    /* Ruang scrollbar & bayangan */
-
-    /* Sembunyikan Scrollbar */
-    scrollbar-width: none;
-    -ms-overflow-style: none;
 }
 
-.room-list::-webkit-scrollbar {
-    display: none;
-}
-
-/* 3. KARTU ITEM (KUNCI LEBAR TETAP) */
 .room-card-item {
-    /* Gunakan Lebar Fix (320px) yang Proporsional. */
-    /* Ini akan memaksa 3 kartu muncul di layar desktop standar. */
-    flex: 0 0 320px;
-    width: 320px;
-
-    /* LAYOUT DALAM KARTU (Kiri-Kanan) */
-    display: flex !important;
-    flex-direction: row !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-
-    background-color: var(--bg-card) !important;
+    background: var(--white);
     border: 1px solid var(--border-color);
-    border-radius: 12px;
+    border-radius: 8px;
     padding: 15px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-    min-height: 80px;
-    transition: all 0.2s;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
-/* 4. ResponsiF (Opsional, tapi penting) */
-@media (max-width: 1080px) {
-
-    /* Di layar yang sedikit lebih kecil, perkecil sedikit */
-    .room-card-item {
-        flex: 0 0 280px;
-        width: 280px;
-    }
+.room-info {
+    display: flex;
+    gap: 10px;
 }
 
-@media (max-width: 768px) {
-
-    /* Tablet/Layar Sempit: 2 kartu terlihat */
-    .room-card-item {
-        flex: 0 0 calc((100% - 15px) / 2);
-        width: calc((100% - 15px) / 2);
-    }
+.pin-icon {
+    color: var(--text-muted);
+    font-size: 16px;
 }
 
-/* 5. BADGE FIX (Pastikan muncul dan tidak hilang) */
-.badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    padding: 4px 10px;
-    border-radius: 50px;
-    font-size: 10px;
-    font-weight: 800;
-    text-transform: uppercase;
-    white-space: nowrap;
-    line-height: 1;
+.room-info h4 {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 3px;
 }
 
-/* WARNA BADGE */
+.room-info p {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
 .badge-black {
-    background-color: #1e293b !important;
-    color: #ffffff !important;
+    background-color: #0F172A;
+    color: white;
+    font-size: 10px;
+    padding: 4px 8px;
+    border-radius: 20px;
+    font-weight: 600;
 }
 
-.badge-red {
-    background-color: #ef4444 !important;
-    color: #ffffff !important;
+/* Responsive agar kartu ruangan turun ke bawah di layar kecil */
+@media (max-width: 1000px) {
+    .room-list {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* --- DYNAMIC ADD-ONS STYLES --- */
@@ -944,6 +870,42 @@ body.dark-mode select option {
 body.dark-mode select {
     background-color: var(--bg-input);
     color: var(--text-main);
+}
+
+/* --- CAROUSEL ROOM STYLES (FIXED 3 ITEMS) --- */
+
+.room-list-wrapper {
+    overflow: hidden;
+    width: 100%;
+    position: relative;
+}
+
+.room-list {
+    display: flex !important;
+    gap: 15px;
+    /* Jarak antar kartu */
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding-bottom: 5px;
+
+    /* Sembunyikan Scrollbar */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.room-list::-webkit-scrollbar {
+    display: none;
+}
+
+/* KUNCI: Paksa ukuran kartu agar muat pas 3 biji */
+.room-card-item {
+    /* Rumus: (100% dibagi 3) dikurangi sedikit gap-nya */
+    flex: 0 0 calc(33.333% - 10px);
+    max-width: calc(33.333% - 10px);
+
+    box-sizing: border-box;
+    /* Hapus min-width pixel agar tidak meledak di layar kecil */
+    min-width: 0;
 }
 
 /* Navigasi */
@@ -1559,6 +1521,41 @@ body.dark-mode .addon-select {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23FFFFFF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
 }
 
+/* --- FIX ROOM AVAILABILITY BACKGROUND --- */
+
+/* 1. Reset Container Utama agar Transparan (Menyatu dengan background abu) */
+.availability-section {
+    background-color: transparent !important;
+    /* Hapus background putih */
+    border: none !important;
+    /* Hapus border kotak besar */
+    box-shadow: none !important;
+    /* Hapus bayangan kotak besar */
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+/* 2. Pastikan KARTU RUANGAN (Anak) tetap Putih & Timbul */
+.room-card-item {
+    background-color: var(--bg-card) !important;
+    /* Tetap Putih/Card Color */
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow);
+    /* Tambahkan shadow di tiap kartu kecil */
+    border-radius: 12px;
+}
+
+/* --- BADGE STATUS WARNA --- */
+.badge-red {
+    background-color: #EF4444;
+    /* Merah */
+    color: white;
+    font-size: 10px;
+    padding: 4px 8px;
+    border-radius: 20px;
+    font-weight: 600;
+}
+
 /* --- CUSTOM STATUS MODAL STYLES --- */
 
 /* Wrapper Modal (Tengah) */
@@ -1696,249 +1693,4 @@ body.dark-mode .error-bg {
     border: 1px solid var(--border-color);
     box-shadow: var(--shadow);
     border-radius: 12px;
-}
-
-/* --- WARNA WARNING (KUNING) --- */
-.warning-bg {
-    background-color: #FEF3C7;
-    /* Kuning Pucat */
-    color: #D97706;
-    /* Kuning Tua / Oranye */
-}
-
-/* Tombol Secondary (Putih/Abu) untuk cancel */
-.btn-secondary {
-    background-color: var(--bg-card);
-    color: var(--text-main);
-    border: 1px solid var(--border-color);
-    padding: 12px;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-}
-
-.btn-secondary:hover {
-    background-color: var(--hover-bg);
-}
-
-/* Konten dalam kartu */
-.room-info {
-    display: flex;
-    align-items: center;
-    /* Rata tengah vertikal */
-    gap: 12px;
-    margin-bottom: 8px;
-}
-
-.room-info h4 {
-    margin: 0;
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--text-main);
-    line-height: 1.4;
-}
-
-.room-info p {
-    margin: 2px 0 0 0;
-    font-size: 11px;
-    color: var(--text-muted);
-}
-
-.pin-icon {
-    font-size: 18px;
-}
-
-/* =========================================
-   STYLING FORM LOGIN (MODERN LOOK)
-========================================= */
-
-/* 1. Wrapper untuk Input & Icon */
-.input-wrapper {
-    position: relative;
-    /* Wajib: Agar icon bisa menumpang di atas input */
-    width: 100%;
-}
-
-/* 2. Styling Kotak Input (Email & Password) */
-.input-wrapper input,
-.form-group input:not([type="checkbox"]) {
-    width: 100%;
-    /* Padding: Atas 12px, Kanan 15px, Bawah 12px, KIRI 45px (Biar gak nabrak icon) */
-    padding: 12px 15px 12px 45px;
-
-    background-color: #F8FAFC;
-    /* Abu sangat muda (Clean) */
-    border: 1px solid #E2E8F0;
-    /* Garis pinggir halus */
-    border-radius: 10px;
-    /* Sudut melengkung modern */
-
-    font-size: 14px;
-    font-family: 'Inter', sans-serif;
-    /* Pastikan font sesuai */
-    color: #1E293B;
-    /* Warna teks gelap */
-
-    outline: none;
-    /* Hapus outline bawaan browser */
-    transition: all 0.3s ease;
-    /* Animasi halus saat diklik */
-}
-
-/* 3. Efek Saat Input Diklik (Focus State) */
-.input-wrapper input:focus,
-.form-group input:not([type="checkbox"]):focus {
-    background-color: #FFFFFF;
-    /* Jadi putih bersih */
-    border-color: #3B82F6;
-    /* Border jadi Biru */
-    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
-    /* Efek Glow/Cahaya Biru */
-}
-
-/* 4. Styling Icon (Gembok / Amplop) */
-.input-icon {
-    position: absolute;
-    left: 15px;
-    /* Jarak dari kiri */
-    top: 50%;
-    /* Posisi tengah vertikal */
-    transform: translateY(-50%);
-    /* Koreksi agar benar-benar di tengah */
-
-    color: #94A3B8;
-    /* Warna abu soft */
-    font-size: 16px;
-    pointer-events: none;
-    /* Agar klik tembus ke input */
-    transition: color 0.3s ease;
-}
-
-/* 5. Icon Berubah Warna saat Input Aktif */
-.input-wrapper:focus-within .input-icon {
-    color: #3B82F6;
-    /* Icon jadi biru juga */
-}
-
-/* 6. Pesan Error / Helper (Opsional) */
-input::placeholder {
-    color: #CBD5E1;
-    /* Warna placeholder lebih pudar */
-}
-
-/* --- USER MANAGEMENT STYLES --- */
-
-.user-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 20px;
-    padding: 10px 0;
-}
-
-.user-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border-color);
-    border-radius: 12px;
-    padding: 20px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    transition: box-shadow 0.2s;
-}
-
-.user-card:hover {
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-}
-
-.user-card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 20px;
-}
-
-.user-card-header h3 {
-    font-size: 14px;
-    font-weight: 700;
-    margin-bottom: 4px;
-    text-transform: uppercase;
-    color: var(--text-main);
-}
-
-.user-card-header .role-badge {
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 11px;
-    font-weight: 600;
-}
-
-.role-admin {
-    background-color: #EDE9FE;
-    /* Ungu Muda */
-    color: #7C3AED;
-}
-
-.role-user {
-    background-color: #DCFCE7;
-    /* Hijau Muda */
-    color: #15803D;
-}
-
-.user-card-info {
-    margin-bottom: 10px;
-}
-
-.user-card-info p {
-    font-size: 13px;
-    color: var(--text-muted);
-    margin-bottom: 8px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    word-break: break-word;
-    /* Prevent email overflow */
-}
-
-.user-card-actions {
-    display: flex;
-    gap: 10px;
-    margin-top: auto;
-    border-top: 1px solid var(--border-color);
-    padding-top: 15px;
-}
-
-.btn-reset {
-    flex: 1;
-    background: var(--white);
-    border: 1px solid var(--border-color);
-    padding: 8px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--text-main);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-    transition: background 0.2s;
-}
-
-.btn-reset:hover {
-    background: #F8FAFC;
-}
-
-.btn-delete-user {
-    background: #FEF2F2;
-    border: 1px solid #FECACA;
-    color: #EF4444;
-    padding: 8px 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-.btn-delete-user:hover {
-    background: #FEE2E2;
 }
