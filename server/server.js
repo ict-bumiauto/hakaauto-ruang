@@ -15,14 +15,14 @@ app.use(express.json());
 
 // --- A. SUPABASE ---
 // Masukkan URL & Anon Key Supabase Anda
-const supabaseUrl = 'https://bvvnagfezgzrxfmkcuzz.supabase.co'; 
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ2dm5hZ2Zlemd6cnhmbWtjdXp6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ1NzQ2NzQsImV4cCI6MjA4MDE1MDY3NH0.VhJeH1P2qsiH8mX_IQ7-Yg8kx76f-etiZ9cmusTqAaQ'; 
+const supabaseUrl = 'https://bvvnagfezgzrxfmkcuzz.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ2dm5hZ2Zlemd6cnhmbWtjdXp6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ1NzQ2NzQsImV4cCI6MjA4MDE1MDY3NH0.VhJeH1P2qsiH8mX_IQ7-Yg8kx76f-etiZ9cmusTqAaQ';
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 // --- B. RESEND (EMAIL) ---
 // Masukkan API Key Resend Anda
-const resend = new Resend('re_hSLnyXYk_3F79zUuofZkBTUsSsXQqv1fQ'); 
+const resend = new Resend('re_hSLnyXYk_3F79zUuofZkBTUsSsXQqv1fQ');
 
 // --- C. PENGATURAN EMAIL (BAGIAN INI YANG DIUPDATE) ---
 
@@ -31,7 +31,7 @@ const FROM_EMAIL = 'Booking System <no-reply@ruang.bumiauto.works>';
 
 // 2. Email Admin (Penerima notifikasi jika ada request baru)
 // Sekarang Anda bisa masukkan email kantor asli!
-const ADMIN_EMAIL = 'ict@hakaauto.co.id'; 
+const ADMIN_EMAIL = 'ict@hakaauto.co.id';
 
 // ============================================================
 // 2. HELPER FUNCTION: KIRIM EMAIL
@@ -42,14 +42,14 @@ async function sendEmailNotification(type, data) {
     let recipient = '';
 
     // Format Tanggal Cantik (Senin, 1 Desember 2025)
-    const dateStr = new Date(data.bookingDate).toLocaleDateString('id-ID', { 
-        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+    const dateStr = new Date(data.bookingDate).toLocaleDateString('id-ID', {
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
     });
 
     if (type === 'NEW_BOOKING') {
         // --- KASUS 1: ADA BOOKING BARU -> KIRIM KE ADMIN ---
-        recipient = ADMIN_EMAIL; 
-        
+        recipient = ADMIN_EMAIL;
+
         subject = `[New Request] ${data.roomName} - ${data.borrowerName}`;
         htmlContent = `
             <h3>📅 Permintaan Booking Baru</h3>
@@ -65,15 +65,15 @@ async function sendEmailNotification(type, data) {
             <p><em>Add-ons:</em> ${JSON.stringify(data.addOns)}</p>
             <p>Silakan buka Dashboard Admin untuk Approve/Reject.</p>
         `;
-    } 
+    }
     else if (type === 'STATUS_UPDATE') {
         // --- KASUS 2: STATUS BERUBAH -> KIRIM KE USER ---
-        
+
         // CATAAN: Karena kita belum punya database user email, 
         // sementara ini kita kirim notifikasi balik ke Admin (sebagai tembusan)
         // atau Anda bisa hardcode email user tertentu untuk tes.
         recipient = ADMIN_EMAIL; // Bisa diganti email user jika nanti sudah ada fitur login email
-        
+
         const color = data.status === 'Approved' ? 'green' : 'red';
         subject = `[Status Update] Booking ${data.status}: ${data.roomName}`;
         htmlContent = `
@@ -88,7 +88,7 @@ async function sendEmailNotification(type, data) {
             </ul>
             <p><strong>Catatan Admin:</strong> ${data.notes || '-'}</p>
             <br>
-            <p>Terima kasih,<br>GA Dept Bumi Auto</p>
+            <p>Terima kasih,<br>GA Dept HAKA AUTO</p>
         `;
     }
 
@@ -102,7 +102,7 @@ async function sendEmailNotification(type, data) {
 
         if (error) console.error("❌ Gagal Kirim Email:", error);
         else console.log("✅ Email Terkirim ID:", emailData.id);
-        
+
     } catch (err) {
         console.error("❌ Error Resend:", err);
     }
@@ -130,10 +130,10 @@ app.post('/api/bookings', async (req, res) => {
             .eq('bookingDate', data.bookingDate)
             .eq('roomName', data.roomName)
             .neq('status', 'Rejected').neq('status', 'Cancelled');
-        
+
         if (fetchError) throw fetchError;
 
-        const toMinutes = (s) => { const [h,m]=s.split(':').map(Number); return h*60+m; };
+        const toMinutes = (s) => { const [h, m] = s.split(':').map(Number); return h * 60 + m; };
         const newStart = toMinutes(data.startTime);
         const newEnd = toMinutes(data.endTime);
 
@@ -149,7 +149,7 @@ app.post('/api/bookings', async (req, res) => {
 
         // Simpan
         const { data: savedData, error: insertError } = await supabase
-            .from('bookings').insert([ data ]).select();
+            .from('bookings').insert([data]).select();
 
         if (insertError) throw insertError;
 
@@ -180,7 +180,7 @@ app.put('/api/bookings/:ticketNumber', async (req, res) => {
         if (data && data.length > 0) {
             sendEmailNotification('STATUS_UPDATE', data[0]);
         }
-        
+
         res.json(data[0]);
 
     } catch (err) {
