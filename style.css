@@ -1911,3 +1911,103 @@ input::placeholder {
 .btn-delete-user:hover {
     background: #FEE2E2;
 }
+
+/* =========================================
+   NEW MODAL BOOKING CARD STYLES
+   ========================================= */
+
+.booking-card {
+    background-color: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s;
+}
+
+.booking-card:last-child {
+    margin-bottom: 0;
+}
+
+.booking-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.booking-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 8px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.booking-row:last-child {
+    margin-bottom: 0;
+}
+
+.booking-icon {
+    flex-shrink: 0;
+    width: 20px;
+    text-align: center;
+    font-size: 16px;
+}
+
+/* Time Style (Blue & Bold) */
+.booking-time {
+    color: #2563EB;
+    font-weight: 700;
+    background-color: #EFF6FF;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 13px;
+    display: inline-block;
+}
+
+/* Room Name Style (Pink/Reddish) */
+.booking-room {
+    color: #DB2777;
+    font-weight: 600;
+}
+
+/* Person Name (Dark Color) */
+.booking-person {
+    color: #1E293B;
+    font-weight: 600;
+}
+
+/* Department (Gray) */
+.booking-dept {
+    color: #64748B;
+    font-size: 13px;
+    font-weight: 400;
+}
+
+/* Purpose (Standard Text) */
+.booking-purpose {
+    color: #334155;
+    font-style: italic;
+}
+
+/* Dark Mode Adjustments */
+body.dark-mode .booking-card {
+    background-color: #1E293B;
+    /* Slate 800 */
+    border-color: #334155;
+}
+
+body.dark-mode .booking-time {
+    background-color: rgba(37, 99, 235, 0.2);
+    color: #60A5FA;
+}
+
+body.dark-mode .booking-person,
+body.dark-mode .booking-purpose {
+    color: #E2E8F0;
+}
+
+body.dark-mode .booking-dept {
+    color: #94A3B8;
+}

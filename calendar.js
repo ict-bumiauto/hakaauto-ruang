@@ -424,10 +424,33 @@ document.addEventListener('DOMContentLoaded', function () {
 
             bookings.forEach(evt => {
                 html += `
-                <div class="modal-event-item" style="border-bottom:1px solid #eee; padding-bottom:10px; margin-bottom:10px;">
-                     <div style="color:#2563EB; font-weight:bold;">🕒 ${evt.startTime} - ${evt.endTime}</div>
-                     <div><strong>${evt.borrowerName}</strong> (${evt.department})</div>
-                     <div style="font-size:12px; color:#64748B; margin-top:2px;">Purpose: ${evt.purpose}</div>
+                <div class="booking-card">
+                    <!-- Time -->
+                    <div class="booking-row">
+                        <div class="booking-icon">🕒</div>
+                        <div class="booking-time">${evt.startTime} - ${evt.endTime}</div>
+                    </div>
+                    
+                    <!-- Room -->
+                    <div class="booking-row">
+                        <div class="booking-icon">📍</div>
+                        <div class="booking-room">${evt.roomName}</div>
+                    </div>
+
+                    <!-- Person -->
+                    <div class="booking-row">
+                        <div class="booking-icon">👤</div>
+                        <div>
+                            <span class="booking-person">${evt.borrowerName}</span>
+                            <span class="booking-dept"> (${evt.department})</span>
+                        </div>
+                    </div>
+
+                    <!-- Purpose -->
+                    <div class="booking-row">
+                        <div class="booking-icon">🎯</div>
+                        <div class="booking-purpose">Meeting Purpose: ${evt.purpose}</div>
+                    </div>
                 </div>
                 `;
             });
