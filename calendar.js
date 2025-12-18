@@ -73,6 +73,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 window.location.href = '/';
             };
         }
+
+        // ---------------------------------------------
+        // HAPUS (HIDE) QUICK STATS & RECENT UTK GUEST
+        // ---------------------------------------------
+        const statsSection = document.querySelector('.quick-stats');
+        const recentSection = document.querySelector('.recent-bookings');
+        if (statsSection) statsSection.style.display = 'none';
+        if (recentSection) recentSection.style.display = 'none';
     }
 
     // ============================================================
