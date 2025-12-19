@@ -126,46 +126,66 @@ document.addEventListener('DOMContentLoaded', function () {
     const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
     // List Hari Libur Nasional 2025 (Official)
-    const holidays2025 = [
-        "2025-01-01", "2025-01-27", "2025-01-28", "2025-01-29",
-        "2025-03-28", "2025-03-29", "2025-03-31", "2025-04-01",
-        "2025-04-02", "2025-04-03", "2025-04-04", "2025-04-07",
-        "2025-04-18", "2025-04-20", "2025-05-01", "2025-05-12",
-        "2025-05-13", "2025-05-29", "2025-05-30", "2025-06-01",
-        "2025-06-06", "2025-06-09", "2025-06-27", "2025-08-17",
-        "2025-09-05", "2025-12-25", "2025-12-26"
-    ];
+    const holidays2025 = {
+        "2025-01-01": "Tahun Baru 2025",
+        "2025-01-27": "Isra Mikraj",
+        "2025-01-28": "Tahun Baru Imlek",
+        "2025-01-29": "Tahun Baru Imlek",
+        "2025-03-28": "Cuti Bersama",
+        "2025-03-29": "Hari Suci Nyepi",
+        "2025-03-31": "Idul Fitri 1446 H",
+        "2025-04-01": "Idul Fitri 1446 H",
+        "2025-04-02": "Cuti Bersama",
+        "2025-04-03": "Cuti Bersama",
+        "2025-04-04": "Cuti Bersama",
+        "2025-04-07": "Cuti Bersama",
+        "2025-04-18": "Wafat Yesus Kristus",
+        "2025-04-20": "Kebangkitan Yesus Kristus",
+        "2025-05-01": "Hari Buruh",
+        "2025-05-12": "Hari Raya Waisak",
+        "2025-05-13": "Cuti Bersama",
+        "2025-05-29": "Kenaikan Yesus Kristus",
+        "2025-05-30": "Cuti Bersama",
+        "2025-06-01": "Hari Lahir Pancasila",
+        "2025-06-06": "Idul Adha 1446 H",
+        "2025-06-09": "Cuti Bersama",
+        "2025-06-27": "Tahun Baru Islam",
+        "2025-08-17": "Kemerdekaan RI",
+        "2025-09-05": "Maulid Nabi Muhammad",
+        "2025-12-25": "Hari Raya Natal",
+        "2025-12-26": "Cuti Bersama"
+    };
 
     // List Hari Libur Nasional 2026 (Official SKB 3 Menteri)
-    const holidays2026 = [
-        "2026-01-01", // Tahun Baru 2026
-        "2026-01-16", // Isra Mikraj
-        "2026-02-16", // Cuti Imlek
-        "2026-02-17", // Imlek
-        "2026-03-18", // Cuti Nyepi
-        "2026-03-19", // Nyepi
-        "2026-03-20", // Cuti Idul Fitri
-        "2026-03-21", // Idul Fitri
-        "2026-03-22", // Idul Fitri
-        "2026-03-23", // Cuti Idul Fitri
-        "2026-03-24", // Cuti Idul Fitri
-        "2026-04-03", // Wafat Yesus Kristus
-        "2026-04-05", // Paskah
-        "2026-05-01", // Hari Buruh
-        "2026-05-14", // Kenaikan Yesus Kristus
-        "2026-05-15", // Cuti Kenaikan Yesus Kristus
-        "2026-05-27", // Idul Adha
-        "2026-05-28", // Cuti Idul Adha
-        "2026-05-31", // Waisak
-        "2026-06-01", // Lahir Pancasila
-        "2026-06-16", // Tahun Baru Islam
-        "2026-08-17", // Kemerdekaan RI
-        "2026-08-25", // Maulid Nabi
-        "2026-12-24", // Cuti Natal
-        "2026-12-25"  // Natal
-    ];
+    const holidays2026 = {
+        "2026-01-01": "Tahun Baru 2026",
+        "2026-01-16": "Isra Mikraj",
+        "2026-02-16": "Cuti Imlek",
+        "2026-02-17": "Tahun Baru Imlek",
+        "2026-03-18": "Cuti Nyepi",
+        "2026-03-19": "Hari Suci Nyepi",
+        "2026-03-20": "Cuti Idul Fitri",
+        "2026-03-21": "Idul Fitri 1447 H",
+        "2026-03-22": "Idul Fitri 1447 H",
+        "2026-03-23": "Cuti Idul Fitri",
+        "2026-03-24": "Cuti Idul Fitri",
+        "2026-04-03": "Wafat Yesus Kristus",
+        "2026-04-05": "Paskah",
+        "2026-05-01": "Hari Buruh",
+        "2026-05-14": "Kenaikan Yesus Kristus",
+        "2026-05-15": "Cuti Kenaikan Yesus",
+        "2026-05-27": "Idul Adha 1447 H",
+        "2026-05-28": "Cuti Idul Adha",
+        "2026-05-31": "Hari Raya Waisak",
+        "2026-06-01": "Lahir Pancasila",
+        "2026-06-16": "Tahun Baru Islam",
+        "2026-08-17": "Kemerdekaan RI",
+        "2026-08-25": "Maulid Nabi Muhammad",
+        "2026-12-24": "Cuti Natal",
+        "2026-12-25": "Hari Raya Natal"
+    };
 
-    const allHolidays = [...holidays2025, ...holidays2026];
+    const allHolidays = { ...holidays2025, ...holidays2026 };
 
     function renderCalendar(allBookings) {
         let firstDayofMonth = new Date(currYear, currMonth, 1).getDay();
@@ -195,7 +215,9 @@ document.addEventListener('DOMContentLoaded', function () {
             // Retrieve Current Date String safely
             let currentFullDate = `${currYear}-${String(currMonth + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
 
-            let isNationalHoliday = allHolidays.includes(currentFullDate);
+            let holidayName = allHolidays[currentFullDate];
+            let isNationalHoliday = !!holidayName;
+
             let isRedDate = isWeekend || isNationalHoliday;
 
             let activeClass = isToday ? "active" : "";
@@ -213,11 +235,11 @@ document.addEventListener('DOMContentLoaded', function () {
             if (isPast) {
                 // TANGGAL LEWAT -> DISABLE (Class inactive, Hapus OnClick)
                 // Tetap tambahkan class holiday agar tahu itu hari libur meski disable
-                liTag += `<li class="inactive ${isRedDate ? 'holiday' : ''}"><span class="date-num">${i}</span>${eventHTML}</li>`;
+                liTag += `<li class="inactive ${isRedDate ? 'holiday' : ''}"><span class="date-num">${i}</span>${holidayName ? `<div class="holiday-name">${holidayName}</div>` : ''}${eventHTML}</li>`;
             } else {
                 // HARI INI & MASA DEPAN -> BISA DIKLIK (MERAH JIKA HOLIDAY)
                 liTag += `<li class="${activeClass}" onclick="selectDate(${currYear}, ${currMonth}, ${i})">
-                        <span class="date-num">${i}</span>${eventHTML}</li>`;
+                        <span class="date-num">${i}</span>${holidayName ? `<div class="holiday-name">${holidayName}</div>` : ''}${eventHTML}</li>`;
             }
         }
         for (let i = lastDayofMonth; i < 6; i++) liTag += `<li class="inactive">${i - lastDayofMonth + 1}</li>`;
