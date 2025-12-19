@@ -690,9 +690,9 @@ body {
 }
 
 .room-list {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    /* 3 Kolom kartu */
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 15px;
 }
 
@@ -705,6 +705,11 @@ body {
     justify-content: space-between;
     align-items: flex-start;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+
+    /* 3 Items per row calculation: (100% - total_gap) / 3 */
+    /* Total gap for 3 items = 2 * 15px = 30px */
+    flex: 0 0 calc((100% - 30px) / 3);
+    max-width: calc((100% - 30px) / 3);
 }
 
 .room-info {
@@ -739,8 +744,9 @@ body {
 
 /* Responsive agar kartu ruangan turun ke bawah di layar kecil */
 @media (max-width: 1000px) {
-    .room-list {
-        grid-template-columns: 1fr;
+    .room-card-item {
+        flex: 0 0 100%;
+        max-width: 1000px;
     }
 }
 

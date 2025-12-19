@@ -84,16 +84,10 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // ============================================================
-    // 2. LOGIKA CAROUSEL (Tetap Sama)
+    // 2. LOGIKA CAROUSEL (DIPERBARUI MENJADI GRID)
     // ============================================================
-    const roomContainer = document.querySelector('.room-list');
-    const btnLeft = document.getElementById('scrollLeft');
-    const btnRight = document.getElementById('scrollRight');
+    // Logic scroll dihapus karena diganti grid layout
 
-    if (roomContainer && btnLeft && btnRight) {
-        btnRight.onclick = () => { roomContainer.scrollBy({ left: 335, behavior: 'smooth' }); };
-        btnLeft.onclick = () => { roomContainer.scrollBy({ left: -335, behavior: 'smooth' }); };
-    }
 
     // ============================================================
     // 3. FETCH DATA & RENDER (Tetap Sama)
