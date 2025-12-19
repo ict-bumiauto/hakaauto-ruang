@@ -2,6 +2,8 @@
 :root {
     /* UBAH INI: Abu-abu yang sedikit lebih gelap/kebiruan agar kontras dengan putih */
     --bg-body: #F1F5F9;
+    --white: #FFFFFF;
+    /* Fix missing variable */
 
     /* UBAH INI: Pastikan Container/Card warnanya Putih Bersih */
     --bg-card: #FFFFFF;
