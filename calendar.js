@@ -479,43 +479,43 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     renderPage();
-}); 
- / /   = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =  
- / /   S I D E B A R   T O G G L E   L O G I C  
- / /   = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =  
- w i n d o w . t o g g l e S i d e b a r   =   f u n c t i o n   ( )   {  
-         c o n s t   s i d e b a r   =   d o c u m e n t . q u e r y S e l e c t o r ( ' . s i d e b a r ' )   | |   d o c u m e n t . q u e r y S e l e c t o r ( ' . s i d e b a r - s e c t i o n ' ) ;  
-         c o n s t   m a i n C o n t e n t   =   d o c u m e n t . q u e r y S e l e c t o r ( ' . l e f t - c o n t e n t ' ) ;  
-         c o n s t   e x p a n d B t n   =   d o c u m e n t . g e t E l e m e n t B y I d ( ' e x p a n d S i d e b a r B t n ' ) ;  
-         c o n s t   c o l l a p s e B t n   =   d o c u m e n t . q u e r y S e l e c t o r ( ' . b t n - c o l l a p s e - s i d e b a r ' ) ;  
-  
-         i f   ( ! s i d e b a r   | |   ! m a i n C o n t e n t )   r e t u r n ;  
-  
-         / /   T o g g l e   c l a s s e s  
-         s i d e b a r . c l a s s L i s t . t o g g l e ( ' c o l l a p s e d ' ) ;  
-         m a i n C o n t e n t . c l a s s L i s t . t o g g l e ( ' e x p a n d e d ' ) ;  
-  
-         / /   T o g g l e   B u t t o n   V i s i b i l i t y  
-         c o n s t   i s C o l l a p s e d   =   s i d e b a r . c l a s s L i s t . c o n t a i n s ( ' c o l l a p s e d ' ) ;  
-  
-         i f   ( e x p a n d B t n )   e x p a n d B t n . s t y l e . d i s p l a y   =   i s C o l l a p s e d   ?   ' b l o c k '   :   ' n o n e ' ;  
-  
-         / /   S a v e   S t a t e  
-         l o c a l S t o r a g e . s e t I t e m ( ' s i d e b a r C o l l a p s e d ' ,   i s C o l l a p s e d ) ;  
- }  
-  
- / /   L o a d   S t a t e   o n   P a g e   L o a d  
- f u n c t i o n   l o a d S i d e b a r S t a t e ( )   {  
-         c o n s t   i s C o l l a p s e d   =   l o c a l S t o r a g e . g e t I t e m ( ' s i d e b a r C o l l a p s e d ' )   = = =   ' t r u e ' ;  
-         i f   ( i s C o l l a p s e d )   {  
-                 c o n s t   s i d e b a r   =   d o c u m e n t . q u e r y S e l e c t o r ( ' . s i d e b a r ' )   | |   d o c u m e n t . q u e r y S e l e c t o r ( ' . s i d e b a r - s e c t i o n ' ) ;  
-                 c o n s t   m a i n C o n t e n t   =   d o c u m e n t . q u e r y S e l e c t o r ( ' . l e f t - c o n t e n t ' ) ;  
-                 c o n s t   e x p a n d B t n   =   d o c u m e n t . g e t E l e m e n t B y I d ( ' e x p a n d S i d e b a r B t n ' ) ;  
-  
-                 i f   ( s i d e b a r )   s i d e b a r . c l a s s L i s t . a d d ( ' c o l l a p s e d ' ) ;  
-                 i f   ( m a i n C o n t e n t )   m a i n C o n t e n t . c l a s s L i s t . a d d ( ' e x p a n d e d ' ) ;  
-                 i f   ( e x p a n d B t n )   e x p a n d B t n . s t y l e . d i s p l a y   =   ' b l o c k ' ;  
-         }  
- }  
- l o a d S i d e b a r S t a t e ( ) ;  
- 
+});
+
+// ============================================================
+// SIDEBAR TOGGLE LOGIC
+// ============================================================
+window.toggleSidebar = function () {
+    const sidebar = document.querySelector('.sidebar') || document.querySelector('.sidebar-section');
+    const mainContent = document.querySelector('.left-content');
+    const expandBtn = document.getElementById('expandSidebarBtn');
+    const collapseBtn = document.querySelector('.btn-collapse-sidebar');
+
+    if (!sidebar || !mainContent) return;
+
+    // Toggle classes
+    sidebar.classList.toggle('collapsed');
+    mainContent.classList.toggle('expanded');
+
+    // Toggle Button Visibility
+    const isCollapsed = sidebar.classList.contains('collapsed');
+
+    if (expandBtn) expandBtn.style.display = isCollapsed ? 'block' : 'none';
+
+    // Save State
+    localStorage.setItem('sidebarCollapsed', isCollapsed);
+}
+
+// Load State on Page Load
+function loadSidebarState() {
+    const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+    if (isCollapsed) {
+        const sidebar = document.querySelector('.sidebar') || document.querySelector('.sidebar-section');
+        const mainContent = document.querySelector('.left-content');
+        const expandBtn = document.getElementById('expandSidebarBtn');
+
+        if (sidebar) sidebar.classList.add('collapsed');
+        if (mainContent) mainContent.classList.add('expanded');
+        if (expandBtn) expandBtn.style.display = 'block';
+    }
+}
+loadSidebarState();
