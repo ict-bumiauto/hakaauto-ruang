@@ -1,0 +1,42 @@
+
+/* --- SIDEBAR COLLAPSE STYLES --- */
+.sidebar.collapsed,
+.sidebar-section.collapsed {
+    display: none !important;
+}
+
+.left-content.expanded {
+    flex: 1;
+    width: 100%;
+}
+
+/* Button to Expand Sidebar (Visible when collapsed) */
+.btn-expand-sidebar {
+    position: fixed;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: var(--dark-blue);
+    color: white;
+    border: none;
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+    padding: 10px 5px;
+    cursor: pointer;
+    z-index: 1000;
+    box-shadow: -2px 0 5px rgba(0,0,0,0.1);
+    display: none; /* Hidden by default */
+}
+
+/* Button to Collapse Sidebar (Inside Sidebar) */
+.btn-collapse-sidebar {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 16px;
+    float: right;
+}
+.btn-collapse-sidebar:hover {
+    color: var(--primary-blue);
+}
