@@ -229,18 +229,17 @@ document.addEventListener('DOMContentLoaded', function () {
                               </div>`;
             });
 
-            if (isPast) {
-                // TANGGAL LEWAT -> DISABLE (Class inactive, Hapus OnClick)
-                liTag += `<li class="inactive"><span class="date-num">${i}</span></li>`;
-            } else {
-                // TANGGAL MASA DEPAN / HARI INI -> CLICKABLE
-                liTag += `<li class="${activeClass}" onclick="showDayDetails('${currentFullDate}')">
-                            <span class="date-num">${i}</span>
-                            ${holidayName ? `<div class="holiday-name">${holidayName}</div>` : ''}
-                            ${eventHTML}
-                          </li>`;
-            }
+            // TANGGAL LEWAT -> TETAP BISA DIKLIK & EVENT MUNCUL
+            // Cuma tambahkan class 'inactive' biar agak abu, tapi fungsional
+            let finalClass = isPast ? `inactive ${activeClass}` : activeClass;
+
+            liTag += `<li class="${finalClass}" onclick="showDayDetails('${currentFullDate}')">
+                        <span class="date-num">${i}</span>
+                        ${holidayName ? `<div class="holiday-name">${holidayName}</div>` : ''}
+                        ${eventHTML}
+                      </li>`;
         }
+
         for (let i = lastDayofMonth; i < 6; i++) liTag += `<li class="inactive">${i - lastDayofMonth + 1}</li>`;
 
         currentDateDisplay.innerText = `${months[currMonth]} ${currYear}`;
@@ -485,6 +484,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     renderPage();
 });
+
 
 // ============================================================
 // SIDEBAR TOGGLE LOGIC
