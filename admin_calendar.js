@@ -156,10 +156,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const now = new Date();
             const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-
-            const bookedRooms = allBookings
-                .filter(b => b.bookingDate === todayStr && b.status === 'Approved')
-                .map(b => b.roomName.trim());
+            const OPEN_TIME = "08:00";
+            const CLOSE_TIME = "18:00";
 
             document.querySelectorAll('.room-card-item').forEach(card => {
                 const titleEl = card.querySelector('h4');
@@ -168,19 +166,60 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 if (titleEl && badgeEl) {
                     const roomName = titleEl.innerText.trim();
-                    if (bookedRooms.includes(roomName)) {
-                        badgeEl.innerText = 'Booked';
-                        badgeEl.className = 'badge badge-red';
-                        if (descEl) { descEl.innerText = 'Not Available Today'; descEl.style.color = '#EF4444'; }
+
+                    // ADD CLICK EVENT TO CARD
+                    card.style.cursor = "pointer";
+                    card.onclick = () => showRoomDetails(roomName, allBookings);
+
+                    const bookings = allBookings.filter(b =>
+                        b.bookingDate === todayStr &&
+                        b.status === 'Approved' &&
+                        b.roomName.toLowerCase().includes(roomName.toLowerCase())
+                    );
+
+                    if (bookings.length > 0) {
+                        bookings.sort((a, b) => a.startTime.localeCompare(b.startTime));
+                        let currentPointer = OPEN_TIME;
+                        let isFullDay = true;
+
+                        for (let b of bookings) {
+                            if (b.startTime > currentPointer) {
+                                isFullDay = false;
+                                break;
+                            }
+                            if (b.endTime > currentPointer) {
+                                currentPointer = b.endTime;
+                            }
+                        }
+                        if (currentPointer < CLOSE_TIME) isFullDay = false;
+
+                        const timeList = bookings.map(b => `${b.startTime}-${b.endTime}`).join(', ');
+
+                        if (isFullDay) {
+                            badgeEl.innerText = 'Booked';
+                            badgeEl.className = 'badge badge-red';
+                        } else {
+                            badgeEl.innerText = 'Available';
+                            badgeEl.className = 'badge badge-black';
+                        }
+
+                        if (descEl) {
+                            descEl.innerText = timeList;
+                            descEl.style.color = "#DC2626";
+                            descEl.style.fontWeight = "600";
+                        }
                     } else {
                         badgeEl.innerText = 'Available';
                         badgeEl.className = 'badge badge-black';
-                        if (descEl) { descEl.innerText = 'Ready to use'; descEl.style.color = ''; }
+                        if (descEl) {
+                            descEl.innerText = 'No bookings for today';
+                            descEl.style.color = "";
+                            descEl.style.fontWeight = "";
+                        }
                     }
                 }
             });
 
-            // UPDATE RECENT BOOKINGS & STATS
             updateDashboardStats(allBookings);
 
         } catch (error) {
@@ -188,6 +227,52 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
     updateRoomStatus();
+
+    // --- Show Room Details Modal (Admin Version) ---
+    window.showRoomDetails = (roomName, allBookings) => {
+        const now = new Date();
+        const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+
+        const bookings = allBookings.filter(b =>
+            b.bookingDate === todayStr &&
+            b.status === 'Approved' &&
+            b.roomName.toLowerCase().includes(roomName.toLowerCase())
+        );
+
+        const modalTitle = document.getElementById('modalTitle');
+        const modalContent = document.getElementById('modalContent');
+        const modalFooter = document.getElementById('modalFooter');
+        const modalOverlay = document.getElementById('eventModal');
+
+        if (modalTitle) modalTitle.innerText = `Room Schedule: ${roomName}`;
+
+        let html = '';
+        if (bookings.length > 0) {
+            bookings.sort((a, b) => a.startTime.localeCompare(b.startTime));
+
+            bookings.forEach(evt => {
+                const purposeText = evt.purpose ? evt.purpose : '-';
+                html += `
+                <div class="modal-event-item" style="border:1px solid var(--border-color); padding:10px; margin-bottom:10px; border-radius:6px; background:var(--bg-body);">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                        <strong style="color:var(--primary-blue)">⏰ ${evt.startTime} - ${evt.endTime}</strong>
+                        <button class="btn-cancel-small" onclick="cancelApprovedBooking('${evt.ticketNumber}')" style="background:#fee2e2; color:#dc2626; border:none; padding:3px 8px; border-radius:4px; cursor:pointer; font-weight:bold;">🗑 Cancel</button>
+                    </div>
+                    
+                    <p style="margin:5px 0 2px 0;">👤 <b>${evt.borrowerName}</b> (${evt.department})</p>
+                    <p style="font-size:13px; margin:2px 0; font-weight:500; color:var(--text-main);">
+                        🎯 ${purposeText}
+                    </p>
+                </div>`;
+            });
+        } else {
+            html = `<p style="text-align:center; color:#64748B; padding:20px;">No bookings for this room today. Room is available.</p>`;
+        }
+
+        modalContent.innerHTML = html;
+        modalFooter.innerHTML = `<button class="btn-secondary" onclick="closeModal()">Close</button>`;
+        modalOverlay.style.display = 'flex';
+    };
 
     function updateDashboardStats(allBookings) {
         const statsList = document.querySelector('.quick-stats .stats-list');
