@@ -1,7 +1,7 @@
 // admin_calendar.js
 const API_URL = '/api/bookings';
-document.addEventListener('DOMContentLoaded', function() {
-    
+document.addEventListener('DOMContentLoaded', function () {
+
     const role = localStorage.getItem('userRole');
     if (role !== 'admin') { window.location.href = '/admin'; return; }
 
@@ -12,11 +12,53 @@ document.addEventListener('DOMContentLoaded', function() {
     let currMonth = date.getMonth();
     const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
+    // List Hari Libur Nasional 2025 (Official)
+    const holidays2025 = [
+        "2025-01-01", "2025-01-27", "2025-01-28", "2025-01-29",
+        "2025-03-28", "2025-03-29", "2025-03-31", "2025-04-01",
+        "2025-04-02", "2025-04-03", "2025-04-04", "2025-04-07",
+        "2025-04-18", "2025-04-20", "2025-05-01", "2025-05-12",
+        "2025-05-13", "2025-05-29", "2025-05-30", "2025-06-01",
+        "2025-06-06", "2025-06-09", "2025-06-27", "2025-08-17",
+        "2025-09-05", "2025-12-25", "2025-12-26"
+    ];
+
+    // List Hari Libur Nasional 2026 (Official SKB 3 Menteri)
+    const holidays2026 = [
+        "2026-01-01", // Tahun Baru 2026
+        "2026-01-16", // Isra Mikraj
+        "2026-02-16", // Cuti Imlek
+        "2026-02-17", // Imlek
+        "2026-03-18", // Cuti Nyepi
+        "2026-03-19", // Nyepi
+        "2026-03-20", // Cuti Idul Fitri
+        "2026-03-21", // Idul Fitri
+        "2026-03-22", // Idul Fitri
+        "2026-03-23", // Cuti Idul Fitri
+        "2026-03-24", // Cuti Idul Fitri
+        "2026-04-03", // Wafat Yesus Kristus
+        "2026-04-05", // Paskah
+        "2026-05-01", // Hari Buruh
+        "2026-05-14", // Kenaikan Yesus Kristus
+        "2026-05-15", // Cuti Kenaikan Yesus Kristus
+        "2026-05-27", // Idul Adha
+        "2026-05-28", // Cuti Idul Adha
+        "2026-05-31", // Waisak
+        "2026-06-01", // Lahir Pancasila
+        "2026-06-16", // Tahun Baru Islam
+        "2026-08-17", // Kemerdekaan RI
+        "2026-08-25", // Maulid Nabi
+        "2026-12-24", // Cuti Natal
+        "2026-12-25"  // Natal
+    ];
+
+    const allHolidays = [...holidays2025, ...holidays2026];
+
     // --- 1. RENDER KALENDER ---
     const renderCalendar = async () => {
-        let firstDayofMonth = new Date(currYear, currMonth, 1).getDay(); 
-        let lastDateofMonth = new Date(currYear, currMonth + 1, 0).getDate(); 
-        let lastDateofLastMonth = new Date(currYear, currMonth, 0).getDate(); 
+        let firstDayofMonth = new Date(currYear, currMonth, 1).getDay();
+        let lastDateofMonth = new Date(currYear, currMonth + 1, 0).getDate();
+        let lastDateofLastMonth = new Date(currYear, currMonth, 0).getDate();
         let lastDayofMonth = new Date(currYear, currMonth, lastDateofMonth).getDay();
 
         // FETCH DATA
@@ -24,16 +66,25 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             const res = await fetch(API_URL);
             allBookings = await res.json();
-        } catch(e) { console.error("Error fetching calendar data"); }
+        } catch (e) { console.error("Error fetching calendar data"); }
 
         let liTag = "";
         for (let i = firstDayofMonth; i > 0; i--) liTag += `<li class="inactive">${lastDateofLastMonth - i + 1}</li>`;
 
-        for (let i = 1; i <= lastDateofMonth; i++) { 
+        for (let i = 1; i <= lastDateofMonth; i++) {
             let isToday = i === new Date().getDate() && currMonth === new Date().getMonth() && currYear === new Date().getFullYear();
-            let activeClass = isToday ? "active" : ""; 
-            
+            let activeClass = isToday ? "active" : "";
+
             let currentFullDate = `${currYear}-${String(currMonth + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+
+            // Check Red Date Logic (Weekend & Holiday)
+            let checkDate = new Date(currYear, currMonth, i);
+            let dayOfWeek = checkDate.getDay();
+            let isWeekend = (dayOfWeek === 0 || dayOfWeek === 6);
+            let isNationalHoliday = allHolidays.includes(currentFullDate);
+            let isRedDate = isWeekend || isNationalHoliday;
+
+            if (isRedDate) activeClass += " holiday";
             let events = allBookings.filter(b => b.bookingDate === currentFullDate && b.status === 'Approved');
 
             let eventHTML = '';
@@ -49,7 +100,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         currentDateDisplay.innerText = `${months[currMonth]} ${currYear}`;
         daysTag.innerHTML = liTag;
-        
+
         // Panggil update status hari ini juga
         updateRoomStatus(allBookings);
     };
@@ -68,7 +119,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const now = new Date();
             const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-            
+
             const bookedRooms = allBookings
                 .filter(b => b.bookingDate === todayStr && b.status === 'Approved')
                 .map(b => b.roomName.trim());
@@ -99,7 +150,7 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error("Gagal update status:", error);
         }
     }
-    updateRoomStatus(); 
+    updateRoomStatus();
 
     function updateDashboardStats(allBookings) {
         const statsList = document.querySelector('.quick-stats .stats-list');
@@ -142,12 +193,12 @@ document.addEventListener('DOMContentLoaded', function() {
     window.showDayDetails = async (dateStr) => {
         const res = await fetch(API_URL);
         const allBookings = await res.json();
-        
+
         let events = allBookings.filter(b => b.bookingDate === dateStr && b.status === 'Approved');
 
         const dateObj = new Date(dateStr);
         document.getElementById('modalTitle').innerText = `Schedule: ${dateObj.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}`;
-        
+
         const modalContent = document.getElementById('modalContent');
         const modalFooter = document.getElementById('modalFooter');
         const modalOverlay = document.getElementById('eventModal');
@@ -158,9 +209,9 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             events.forEach(e => {
                 // Cek Addons
-                let addonsHTML = (e.addOns && e.addOns.length > 0) ? 
+                let addonsHTML = (e.addOns && e.addOns.length > 0) ?
                     `<div style="margin-top:5px; padding-top:5px; border-top:1px dashed #eee;">
-                        <small>➕ Add-ons: ${e.addOns.map(i=> `${i.type}: ${i.detail}`).join(', ')}</small>
+                        <small>➕ Add-ons: ${e.addOns.map(i => `${i.type}: ${i.detail}`).join(', ')}</small>
                     </div>` : '';
 
                 // Cek Notes
@@ -213,17 +264,17 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             window.closeModal();
             renderCalendar();
-        } catch(e) { alert("Error cancelling"); }
+        } catch (e) { alert("Error cancelling"); }
     };
 
     // --- 4. OVERRIDE & PRIORITY FORM ---
     window.openOverrideModal = (dateStr) => {
-        document.getElementById('eventModal').style.display = 'none'; 
+        document.getElementById('eventModal').style.display = 'none';
         document.getElementById('overrideDate').value = dateStr;
         document.getElementById('overrideFormModal').style.display = 'flex';
         // (Isi dropdown jam disederhanakan, logic sama kayak sebelumnya)
         let opts = '<option value="">Select</option>';
-        for(let h=8;h<=18;h++) opts += `<option value="${String(h).padStart(2,'0')}:00">${String(h).padStart(2,'0')}:00</option>`;
+        for (let h = 8; h <= 18; h++) opts += `<option value="${String(h).padStart(2, '0')}:00">${String(h).padStart(2, '0')}:00</option>`;
         document.getElementById('ovStart').innerHTML = opts;
         document.getElementById('ovEnd').innerHTML = opts;
     };
@@ -240,7 +291,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const dept = document.getElementById('ovDept').value;
         const purpose = document.getElementById('ovPurpose').value;
 
-        if(!startTime || !endTime || !purpose) {
+        if (!startTime || !endTime || !purpose) {
             alert("Please fill all fields!");
             return;
         }
@@ -250,14 +301,14 @@ document.addEventListener('DOMContentLoaded', function() {
             const res = await fetch(API_URL);
             const allBookings = await res.json();
 
-            const toMin = (s) => { const [h,m]=s.split(':').map(Number); return h*60+m; };
+            const toMin = (s) => { const [h, m] = s.split(':').map(Number); return h * 60 + m; };
             const newStart = toMin(startTime);
             const newEnd = toMin(endTime);
 
             // Cek Konflik
             const conflicts = allBookings.filter(b => {
-                if(b.status !== 'Approved') return false; 
-                if(b.bookingDate === dateStr && b.roomName === roomName) {
+                if (b.status !== 'Approved') return false;
+                if (b.bookingDate === dateStr && b.roomName === roomName) {
                     const exStart = toMin(b.startTime); const exEnd = toMin(b.endTime);
                     return (newStart < exEnd && newEnd > exStart);
                 }
@@ -265,10 +316,10 @@ document.addEventListener('DOMContentLoaded', function() {
             });
 
             // Logic Override
-            if(conflicts.length > 0) {
+            if (conflicts.length > 0) {
                 const conflictNames = conflicts.map(c => `${c.borrowerName} (${c.department})`).join(', ');
-                
-                if(confirm(`⚠️ CONFLICT DETECTED with: ${conflictNames}\n\nDo you want to CANCEL their booking and OVERRIDE?`)) {
+
+                if (confirm(`⚠️ CONFLICT DETECTED with: ${conflictNames}\n\nDo you want to CANCEL their booking and OVERRIDE?`)) {
                     // Batalkan semua yang bentrok
                     for (const conflict of conflicts) {
                         // --- PERBAIKAN UTAMA DISINI: encodeURIComponent ---
@@ -278,15 +329,15 @@ document.addEventListener('DOMContentLoaded', function() {
                             body: JSON.stringify({ status: 'Cancelled', notes: 'Override by Admin' })
                         });
                     }
-                } else { 
+                } else {
                     return; // Batal simpan
                 }
             }
 
             // Simpan Baru
-            const dateStrCode = new Date().toISOString().slice(0,10).replace(/-/g,"");
-            const ticketID = `#BA-${dateStrCode}-${Math.floor(Math.random()*9000)}`;
-            
+            const dateStrCode = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+            const ticketID = `#BA-${dateStrCode}-${Math.floor(Math.random() * 9000)}`;
+
             await fetch(API_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -307,14 +358,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
             alert("Priority Booking Saved Successfully!");
             closeOverrideModal();
-            
+
             // Refresh halaman & data
-            renderCalendar(); 
+            renderCalendar();
             showDayDetails(dateStr); // Buka lagi list untuk memastikan tampilan terupdate
 
-        } catch(e) { 
-            console.error(e); 
-            alert("Error saving data (Check console)"); 
+        } catch (e) {
+            console.error(e);
+            alert("Error saving data (Check console)");
         }
     };
 });
