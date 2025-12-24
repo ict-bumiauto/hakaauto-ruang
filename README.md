@@ -1,4 +1,4 @@
-# Overview Project Peminjaman Ruang (Ruang Bumi Auto)
+# Overview Project Peminjaman Ruang (Ruang HAKA AUTO)
 
 Sistem Informasi Manajemen Peminjaman Ruang Meeting untuk **Bumi Hijau Motor / Haka Auto**.
 Aplikasi ini memudahkan karyawan untuk melihat ketersediaan ruangan, melakukan booking, dan memudahkan Admin GA/ICT untuk mengelola persetujuan peminjaman.
